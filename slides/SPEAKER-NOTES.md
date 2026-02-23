@@ -7,9 +7,9 @@ Total talk time: 40-45 minutes + Q&A
 
 ## Slide 1: Title (2 min)
 
-"Welcome everyone. I'm Manuel Corpas, Senior Lecturer at the University of Westminster and Turing Fellow. Tonight I want to share 10 things that separate casual AI users from the top 1% who are fundamentally changing how research gets done."
+"Welcome everyone. I'm Manuel Corpas, Senior Lecturer at the University of Westminster and Turing Fellow. Tonight I want to share 10 practical techniques that separate casual AI users from the top 1% who are shipping research faster than ever."
 
-"We'll go from quick wins you can do tomorrow morning, to building your own AI agent skills this week. And I've got a live demo of something I built in the last 48 hours."
+"This is about AI fluency: the habits, tools, and workflows that compound your productivity. We'll go from quick wins you can adopt tomorrow morning, to building your own open-source bioinformatics skills. And I've got a live demo of something I built this week."
 
 ---
 
@@ -49,7 +49,7 @@ Total talk time: 40-45 minutes + Q&A
 
 "I embed my research notes, emails, publications, meeting transcripts, and session histories into ChromaDB. Then I can query semantically: 'What did I decide about the Wellcome proposal?' and get a real answer with source citations."
 
-"This is Corpus Core, my knowledge management system. It's the foundation everything else builds on."
+"I built my own RAG system for this. It is the foundation everything else builds on. The key insight: once your AI has memory, it stops being a chatbot and becomes a research partner."
 
 ---
 
@@ -178,7 +178,7 @@ See DEMO-SCRIPT.md for detailed talking points.
 
 "Here's the link. The repo goes live tonight. Star it, clone it, run the Equity Scorer on your own data."
 
-"If you want to contribute a skill, the template and contributing guide are in the repo. Open a PR. I'll review it personally."
+"If you want to contribute a skill, the template and contributing guide are in the repo. Open a PR. I'll review it personally. It's MIT licensed, local-first, and designed so that anyone in this room can add to it."
 
 ---
 
@@ -186,7 +186,7 @@ See DEMO-SCRIPT.md for detailed talking points.
 
 Quick recap of all 10 tips. Don't linger; just hit the main line:
 
-"Tips 1 to 7: use AI effectively. Tips 8 to 10: build with AI. The throughline is this: the top 1% build systems that compound. Everyone else uses tools one at a time."
+"Tips 1 to 7: AI fluency, the productivity habits that compound. Tips 8 to 10: building with AI, turning your domain expertise into open-source tools. The throughline: the top 1% build systems that compound. Everyone else uses tools one at a time."
 
 ---
 

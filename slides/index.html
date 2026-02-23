@@ -104,17 +104,19 @@ code { font-family: 'SF Mono', 'Fira Code', monospace; }
 <!-- ============================================================ -->
 <section class="slide title-slide">
     <h1>10 Tips for Becoming a<br>Top 1% AI User</h1>
-    <div class="subtitle">From quick wins to building your own AI agents</div>
+    <div class="subtitle">Practical AI fluency for researchers who want to ship faster</div>
     <div class="author">Manuel Corpas</div>
     <div class="meta">
         Senior Lecturer, University of Westminster &middot; Turing Fellow<br>
         London Bioinformatics Meetup &middot; 26 February 2026
     </div>
     <div class="notes">
-        Welcome everyone. I'm Manuel Corpas. Tonight I want to share 10 things that
-        separate casual AI users from the top 1% who are fundamentally changing how
-        research gets done. We'll start with quick wins, build towards infrastructure,
-        and end with a live demo of something I built this week.
+        Welcome everyone. I'm Manuel Corpas. Tonight I want to share 10 practical
+        techniques that separate casual AI users from the top 1% who are shipping
+        research faster than ever. This is about AI fluency: the habits, tools, and
+        workflows that compound your productivity. We'll start with quick wins you
+        can adopt tomorrow morning, and end with a live demo of an open-source
+        bioinformatics skill I built this week.
         TIMING: 2 min
     </div>
 </section>
@@ -226,8 +228,9 @@ representation using heterozygosity and FST..."</span></pre>
         Tip 3: memory. The biggest limitation of AI is that every conversation starts
         from zero. Fix this with a RAG pipeline. I embed my research notes, emails,
         publications, and meeting transcripts into ChromaDB. Now I can ask: "What did
-        I decide about the Wellcome proposal?" and get a real answer.
-        This is Corpus Core — my knowledge system. More on this later.
+        I decide about the Wellcome proposal?" and get a real answer with source
+        citations. I built my own RAG system for this; it is the foundation everything
+        else builds on.
         TIMING: 2 min
     </div>
 </section>
@@ -675,13 +678,12 @@ Scorer    Annotator  Synthesizer Orchestrator</span>
                 </ul>
             </div>
         </div>
-        <p class="gap small">Also: <span class="accent">github.com/manuelcorpas/corpus-core</span> — the RAG memory system</p>
+        <p class="gap small">MIT licensed. Clone it, run it, build a skill, submit a PR.</p>
     </div>
     <div class="notes">
         Here's how to get involved. The repo goes live tonight. Star it, clone it,
         run the Equity Scorer on your own data. If you want to build a skill,
         copy the template, and open a PR. The contributing guide walks you through it.
-        Also check out Corpus Core — that's the RAG memory system behind everything.
         TIMING: 1.5 min
     </div>
 </section>

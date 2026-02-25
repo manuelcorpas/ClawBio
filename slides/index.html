@@ -412,8 +412,8 @@ User: "Analyse the diversity in my VCF file"
            │
     ┌──────▼──────────────────────────────┐
     │                                      │
-<span class="green">Equity     VCF        Lit        scRNA
-Scorer    Annotator  Synthesizer Orchestrator</span>
+<span class="green">Equity    PharmGx    VCF        Lit        scRNA
+Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
     │                                      │
     └──────┬──────────────────────────────┘
            │
@@ -436,16 +436,17 @@ Scorer    Annotator  Synthesizer Orchestrator</span>
 <!-- SLIDE 13: SKILL CATALOGUE -->
 <!-- ============================================================ -->
 <section class="slide">
-    <h2>8 Skills Planned</h2>
+    <h2>9 Skills — 3 MVP, 6 Planned</h2>
     <div class="content">
         <div class="two-col">
             <ul>
                 <li><span class="green">Equity Scorer</span> — HEIM diversity metrics <span class="small">[MVP]</span></li>
+                <li><span class="green">PharmGx Reporter</span> — 12 genes, 51 drugs, CPIC <span class="small">[MVP]</span></li>
                 <li><span class="green">Bio Orchestrator</span> — routing + reporting <span class="small">[MVP]</span></li>
                 <li><span class="accent">VCF Annotator</span> — VEP + ClinVar + gnomAD</li>
-                <li><span class="accent">Lit Synthesizer</span> — PubMed + LLM summaries</li>
             </ul>
             <ul>
+                <li><span class="accent">Lit Synthesizer</span> — PubMed + LLM summaries</li>
                 <li><span class="accent">scRNA Orchestrator</span> — Scanpy automation</li>
                 <li><span class="accent">Struct Predictor</span> — AlphaFold/Boltz local</li>
                 <li><span class="accent">Seq Wrangler</span> — FastQC + alignment</li>
@@ -455,11 +456,11 @@ Scorer    Annotator  Synthesizer Orchestrator</span>
         <p class="gap center small">Each skill = a <code>SKILL.md</code> + Python scripts. Composable. Local-first. Auditable.</p>
     </div>
     <div class="notes">
-        Here's the current roadmap. Two skills are already at MVP: the Equity Scorer
-        and the Bio Orchestrator. Six more are planned for the next 6 weeks.
-        Each skill is just a SKILL.md file — that's the instruction set for the agent —
-        plus supporting Python code. They're modular: use one alone, or chain them
-        through the orchestrator.
+        Here's the current roadmap. Three skills are already at MVP: the Equity Scorer,
+        the PharmGx Reporter, and the Bio Orchestrator. Six more are planned.
+        The PharmGx Reporter takes a 23andMe file, profiles 12 pharmacogenes, and
+        generates CPIC drug recommendations for 51 medications. Zero dependencies,
+        runs in under a second.
         TIMING: 1.5 min
     </div>
 </section>
@@ -611,7 +612,141 @@ Scorer    Annotator  Synthesizer Orchestrator</span>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 20: WHY THIS MATTERS -->
+<!-- SLIDE 20: PHARMGX DEMO — TERMINAL -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>Demo: PharmGx Reporter</h2>
+    <div class="content">
+        <pre style="font-size: clamp(0.7rem, 1.2vw, 0.95rem);">
+<span class="cmd">$ python pharmgx_reporter.py --input demo_patient.txt --output report</span>
+
+<span class="cmd">Parsing:</span> demo_patient.txt (23andme format)
+  PGx SNPs found: <span class="val">30/30</span>
+
+<span class="cmd">Gene Profiles:</span>
+  CYP2C19    *1/*2           <span class="orange">Intermediate Metabolizer</span>
+  CYP2D6     *4/*4           <span class="red">Poor Metabolizer</span>
+  CYP2C9     *1/*3           <span class="orange">Intermediate Metabolizer</span>
+  VKORC1     GA              <span class="orange">Intermediate Warfarin Sensitivity</span>
+  SLCO1B1    TC              <span class="orange">Intermediate Function</span>
+  DPYD       Normal/Normal   <span class="green">Normal Metabolizer</span>
+
+<span class="cmd">Drug Recommendations (51 drugs):</span>
+  Standard: <span class="green">21</span>   Caution: <span class="orange">20</span>   Avoid: <span class="red">10</span>
+
+<span class="red">ALERT — Drugs to AVOID:</span>
+  * Codeine: Avoid. Select alternative analgesic.
+  * Tramadol: Avoid. Select alternative analgesic.
+  * Tamoxifen: Consider aromatase inhibitor or TDM.
+  * Amitriptyline, Nortriptyline, Desipramine... (7 TCAs)</pre>
+    </div>
+    <div class="notes">
+        Second demo. This is the PharmGx Reporter. It takes a 23andMe raw data
+        file, profiles 12 pharmacogenes, and looks up CPIC recommendations for
+        51 drugs. This patient is CYP2D6 *4/*4 — a Poor Metabolizer. That means
+        codeine won't work (it can't convert to morphine), tramadol won't work,
+        and seven tricyclic antidepressants should be avoided. This is real
+        pharmacogenomics — the same logic that clinical labs use — running locally
+        in under one second.
+        TIMING: 2 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 21: PHARMGX DEMO — REPORT -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>PharmGx Report: Gene Profiles</h2>
+    <div class="content center">
+        <div style="font-size: clamp(0.85rem, 1.5vw, 1.15rem); text-align: left; max-width: 900px; margin: 0 auto;">
+            <table style="width:100%; border-collapse: collapse; margin-bottom: 1rem;">
+                <tr style="border-bottom: 2px solid #30363d;">
+                    <th style="padding: 0.5em; text-align:left; color:#58a6ff;">Gene</th>
+                    <th style="padding: 0.5em; text-align:left;">Diplotype</th>
+                    <th style="padding: 0.5em; text-align:left;">Phenotype</th>
+                    <th style="padding: 0.5em; text-align:center;">Drugs Affected</th>
+                </tr>
+                <tr style="border-bottom: 1px solid #21262d; background: rgba(248,81,73,0.1);">
+                    <td style="padding: 0.4em;"><strong>CYP2D6</strong></td>
+                    <td style="padding: 0.4em;">*4/*4</td>
+                    <td style="padding: 0.4em;"><span class="red">Poor Metabolizer</span></td>
+                    <td style="padding: 0.4em; text-align:center;"><span class="red">22 drugs</span></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #21262d; background: rgba(210,153,34,0.1);">
+                    <td style="padding: 0.4em;"><strong>CYP2C19</strong></td>
+                    <td style="padding: 0.4em;">*1/*2</td>
+                    <td style="padding: 0.4em;"><span class="orange">Intermediate Metabolizer</span></td>
+                    <td style="padding: 0.4em; text-align:center;"><span class="orange">10 drugs</span></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #21262d; background: rgba(210,153,34,0.1);">
+                    <td style="padding: 0.4em;"><strong>CYP2C9</strong></td>
+                    <td style="padding: 0.4em;">*1/*3</td>
+                    <td style="padding: 0.4em;"><span class="orange">Intermediate Metabolizer</span></td>
+                    <td style="padding: 0.4em; text-align:center;"><span class="orange">6 drugs</span></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #21262d; background: rgba(210,153,34,0.1);">
+                    <td style="padding: 0.4em;"><strong>VKORC1</strong></td>
+                    <td style="padding: 0.4em;">GA</td>
+                    <td style="padding: 0.4em;"><span class="orange">Intermediate Sensitivity</span></td>
+                    <td style="padding: 0.4em; text-align:center;"><span class="orange">Warfarin</span></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #21262d;">
+                    <td style="padding: 0.4em;"><strong>CYP3A5</strong></td>
+                    <td style="padding: 0.4em;">*3/*3</td>
+                    <td style="padding: 0.4em;">Non-expressor</td>
+                    <td style="padding: 0.4em; text-align:center;">Tacrolimus</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #21262d;">
+                    <td style="padding: 0.4em;"><strong>DPYD</strong></td>
+                    <td style="padding: 0.4em;">Normal/Normal</td>
+                    <td style="padding: 0.4em;"><span class="green">Normal</span></td>
+                    <td style="padding: 0.4em; text-align:center;"><span class="green">Safe for 5-FU</span></td>
+                </tr>
+            </table>
+        </div>
+        <p class="small">12 genes profiled. 51 drugs assessed. Zero dependencies. Under 1 second.</p>
+    </div>
+    <div class="notes">
+        Here's the gene profile table from the report. CYP2D6 *4/*4 is the
+        headline — this single gene affects 22 drugs. Codeine literally cannot
+        work in this patient because CYP2D6 converts codeine to morphine, and
+        *4/*4 means no enzyme activity. DPYD is normal, which means this patient
+        is safe for fluorouracil chemotherapy. This is the kind of actionable
+        information that matters for precision medicine.
+        TIMING: 2 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 22: PHARMGX — WHY IT MATTERS -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>Why Pharmacogenomics Matters</h2>
+    <div class="content center">
+        <ul>
+            <li><span class="red">~7%</span> of people are CYP2D6 Poor Metabolizers — codeine gives them <span class="red">zero pain relief</span></li>
+            <li><span class="red">~2%</span> are CYP2C19 Poor Metabolizers — clopidogrel <span class="red">won't prevent</span> their next heart attack</li>
+            <li><span class="red">0.5%</span> carry DPYD variants — standard 5-FU dose can be <span class="red">lethal</span></li>
+        </ul>
+        <p class="gap">One command. 51 drugs assessed. A report your GP can read.</p>
+        <pre class="gap">
+<span class="cmd">$ python pharmgx_reporter.py --input my_23andme.txt --output my_report</span></pre>
+        <p class="gap small">Based on CPIC guidelines (cpicpgx.org). For research use; not a diagnostic device.</p>
+    </div>
+    <div class="notes">
+        Why does pharmacogenomics matter? About 7% of Caucasians are CYP2D6
+        poor metabolizers. Codeine literally does nothing for them because they
+        cannot convert it to morphine. 2% are CYP2C19 poor metabolizers, and
+        clopidogrel won't protect them after a stent. And about 0.5% carry DPYD
+        variants where a standard dose of 5-FU chemotherapy can be fatal.
+        This tool lets you check all of that from a consumer genetic test in
+        under a second.
+        TIMING: 2 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 23: WHY THIS MATTERS -->
 <!-- ============================================================ -->
 <section class="slide">
     <h2>Why This Matters</h2>
@@ -680,7 +815,7 @@ Scorer    Annotator  Synthesizer Orchestrator</span>
             <div>
                 <p><strong>Repository</strong></p>
                 <ul style="max-width:100%">
-                    <li>8 skills (2 MVP, 6 planned)</li>
+                    <li>9 skills (3 MVP, 6 planned)</li>
                     <li>SKILL-TEMPLATE.md</li>
                     <li>Architecture docs</li>
                     <li>Demo dataset + report</li>

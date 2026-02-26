@@ -1,0 +1,91 @@
+"""
+extract_genotypes.py — SNP lookup with forward-strand normalisation
+For each SNP in the panel, extracts the genotype from the parsed data dict.
+Handles strand flipping for ambiguous A/T and C/G SNPs using frequency context.
+"""
+
+COMPLEMENT = {"A": "T", "T": "A", "C": "G", "G": "C"}
+
+# SNPs where both alleles are complementary (ambiguous strand)
+AMBIGUOUS_PAIRS = {frozenset(["A", "T"]), frozenset(["C", "G"])}
+
+
+def flip_genotype(genotype: str) -> str:
+    """Return the complement strand genotype."""
+    return "".join(COMPLEMENT.get(b, b) for b in genotype)
+
+
+def is_ambiguous(ref: str, alt: str) -> bool:
+    return frozenset([ref, alt]) in AMBIGUOUS_PAIRS
+
+
+def extract_snp_genotypes(genotype_table: dict, snp_panel: list) -> dict:
+    """
+    For each SNP in the panel, look up the genotype in genotype_table.
+
+    Returns dict keyed by rsid:
+    {
+      "rsid": "rs1801133",
+      "status": "found" | "not_tested",
+      "genotype": "CT",           # raw as reported
+      "normalised": "CT",         # forward-strand normalised
+      "risk_allele": "T",
+      "risk_count": 1             # 0, 1, or 2 copies of risk allele
+    }
+    """
+    results = {}
+
+    for snp in snp_panel:
+        rsid = snp["rsid"]
+        risk_allele = snp["risk_allele"]
+        ref_allele = snp.get("ref_allele", "")
+
+        if rsid not in genotype_table:
+            results[rsid] = {
+                "rsid": rsid,
+                "gene": snp["gene"],
+                "status": "not_tested",
+                "genotype": None,
+                "normalised": None,
+                "risk_allele": risk_allele,
+                "risk_count": None,
+                "nutrient_domain": snp["nutrient_domain"],
+            }
+            continue
+
+        raw_geno = genotype_table[rsid]
+        if not raw_geno or len(raw_geno) < 2:
+            results[rsid] = {
+                "rsid": rsid,
+                "gene": snp["gene"],
+                "status": "no_call",
+                "genotype": raw_geno,
+                "normalised": None,
+                "risk_allele": risk_allele,
+                "risk_count": None,
+                "nutrient_domain": snp["nutrient_domain"],
+            }
+            continue
+
+        # Try direct match first
+        norm = raw_geno
+        if risk_allele not in raw_geno:
+            # Try strand flip
+            flipped = flip_genotype(raw_geno)
+            if risk_allele in flipped:
+                norm = flipped
+
+        risk_count = norm.count(risk_allele)
+
+        results[rsid] = {
+            "rsid": rsid,
+            "gene": snp["gene"],
+            "status": "found",
+            "genotype": raw_geno,
+            "normalised": norm,
+            "risk_allele": risk_allele,
+            "risk_count": risk_count,
+            "nutrient_domain": snp["nutrient_domain"],
+        }
+
+    return results

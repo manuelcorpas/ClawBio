@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>10 Tips for Becoming a Top 1% AI User — Manuel Corpas</title>
+<title>🦖 10 Tips for Becoming a Top 1% AI User — ClawBio — Manuel Corpas</title>
 
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
@@ -11,16 +11,16 @@
 <link rel="apple-touch-icon" href="../img/clawbio-logo.jpeg">
 
 <!-- Open Graph (LinkedIn, Facebook, etc.) -->
-<meta property="og:title" content="10 Tips for Becoming a Top 1% AI User — ClawBio">
-<meta property="og:description" content="ClawBio: The first bioinformatics-native AI agent skill library. Local-first, privacy-focused, reproducible. Presented at the London Bioinformatics Meetup.">
+<meta property="og:title" content="🦖 10 Tips for Becoming a Top 1% AI User — ClawBio">
+<meta property="og:description" content="🦖 ClawBio: The first bioinformatics-native AI agent skill library. Local-first, privacy-focused, reproducible. Presented at the London Bioinformatics Meetup.">
 <meta property="og:image" content="https://manuelcorpas.github.io/ClawBio/img/clawbio-logo.jpeg">
 <meta property="og:url" content="https://manuelcorpas.github.io/ClawBio/slides/">
 <meta property="og:type" content="website">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="10 Tips for Becoming a Top 1% AI User — ClawBio">
-<meta name="twitter:description" content="ClawBio: The first bioinformatics-native AI agent skill library. Local-first, privacy-focused, reproducible.">
+<meta name="twitter:title" content="🦖 10 Tips for Becoming a Top 1% AI User — ClawBio">
+<meta name="twitter:description" content="🦖 ClawBio: The first bioinformatics-native AI agent skill library. Local-first, privacy-focused, reproducible.">
 <meta name="twitter:image" content="https://manuelcorpas.github.io/ClawBio/img/clawbio-logo.jpeg">
 <style>
 /* ===== RESET & BASE ===== */
@@ -210,24 +210,39 @@ code { font-family: 'SF Mono', 'Fira Code', monospace; }
     <div class="tip-num">Tip 2</div>
     <h2>Build a Prompt Library</h2>
     <div class="content">
-        <pre>
-<span class="cmd"># CLAUDE.md — project instructions that persist</span>
-## Python Standards
-- Python 3.11+, pathlib for all paths
-- Logging with timestamps to LOGS/
-- Single responsibility per script
+        <pre style="font-size: clamp(0.7rem, 1.2vw, 0.95rem);">
+<span class="cmd"># CLAUDE.md — the AI reads this at the start of every session</span>
 
-## Architecture Rules
-- Agent folders use two-digit prefixes
-- Every agent: PYTHON/, DATA/, LOGS/, OUTPUT/</pre>
-        <p class="gap center small">Your <code>CLAUDE.md</code> is your prompt library. The AI reads it every session.</p>
+<span class="cmd">## Common Commands</span>
+- Run memory query: <span class="val">python query_corpas.py "genomic equity"</span>
+- Run RoboTerri:    <span class="val">python 05-telegram_bot.py</span>
+- Run RoboIsaac:    <span class="val">python 05-whatsapp_bot.py</span>
+
+<span class="cmd">## Current Focus</span>
+- RAG memory pipeline across notes, emails, publications
+- Dual AI agent deployment: RoboTerri + RoboIsaac
+- Daily research intelligence: arXiv ranking + podcasts
+- Decision-support for research, career, and operations
+
+<span class="cmd">## Architecture Rules (STRICT)</span>
+- All folder names: ALL CAPS with hyphens
+- No hardcoded paths. Use pathlib.
+- Every agent folder: PYTHON/, DATA/, LOGS/, OUTPUT/</pre>
+        <p class="gap center small">One file. The AI reads it every session. It already knows your project, your tools, your rules.</p>
+        <p class="center small gap">But it's not static. I run <code>/handoff</code> at the end of every session — decisions, progress, and lessons <span class="accent">feed back in</span>. The system learns what I learn. Every day it gets sharper.</p>
     </div>
     <div class="notes">
-        Tip 2: don't type the same instructions every time. Put them in a CLAUDE.md
-        file at your project root. Claude Code reads this automatically. It contains
-        your coding standards, architecture rules, common commands. Think of it as
-        onboarding documentation — but for your AI.
-        TIMING: 2 min
+        Tip 2: this is from my actual CLAUDE.md file. The AI reads it at the start
+        of every session. It knows my commands, my research focus, my architecture
+        rules. I never have to explain my project again.
+
+        But here's the key: it's not a static file. At the end of every session, I run
+        a skill called /handoff. It captures what I decided, what changed, what I learned.
+        That feeds back into the system. So tomorrow's AI session starts with everything
+        today's session discovered. It's a recurrent learning loop — the system gets
+        sharper every single day. That's the difference between a prompt and a living
+        knowledge base.
+        TIMING: 2.5 min
     </div>
 </section>
 
@@ -378,29 +393,66 @@ representation using heterozygosity and FST..."</span></pre>
 <!-- ============================================================ -->
 <section class="slide">
     <div class="tip-num">Tip 8</div>
-    <h2>Contribute to Open-Source AI</h2>
+    <h2>Why Not Just Use ChatGPT?</h2>
     <div class="content center">
-        <p>The bioinformatics community needs<br><span class="accent" style="font-size:1.3em">local-first, privacy-focused AI agents</span></p>
+        <p>Ask Claude to "profile my pharmacogenes from this 23andMe file."</p>
+        <p class="gap small">It will try. It'll write plausible-looking Python. But:</p>
         <div class="gap">
             <ul>
-                <li>Genomic data is <span class="red">sensitive</span>: you can't send VCFs to cloud APIs</li>
-                <li>Biology demands <span class="orange">reproducibility</span>: every step must be auditable</li>
-                <li>Generic agents don't know <span class="purple">domain-specific workflows</span></li>
+                <li>It <span class="red">hallucinates</span> star allele calls and uses outdated CPIC guidelines</li>
+                <li>It <span class="red">forgets</span> CYP2D6 *4 is no-function (not reduced)</li>
+                <li>You spend <span class="orange">45 minutes debugging</span> its output</li>
+                <li>No reproducibility bundle. No audit log. No checksums.</li>
             </ul>
         </div>
-        <p class="gap">Announcing: <span class="accent" style="font-size:1.3em; font-weight:700">ClawBio</span></p>
+        <p class="gap">Announcing: <span class="accent" style="font-size:1.3em; font-weight:700">🦖 ClawBio</span></p>
         <img src="../img/clawbio-logo.jpeg" alt="ClawBio Logo" style="max-height:20vh; margin: 1rem 0;">
-        <p class="small">The first bioinformatics-native AI agent skill library</p>
+        <p class="small">A domain expert's judgement, frozen into code that an AI agent executes correctly every time.</p>
     </div>
     <div class="notes">
-        Tip 8: contribute to open-source AI. Here's the problem: general purpose
-        AI agents like Claude or ChatGPT are powerful, but they don't understand
-        bioinformatics workflows. They don't know that VCF files need ancestry-aware
-        annotation. They don't generate reproducibility bundles.
-        And critically: you can't send your patient genomes to a cloud API.
-        So I'm announcing ClawBio — a collection of modular, local-first
-        AI agent skills designed specifically for bioinformatics.
+        "Now, some of you are thinking: can't I just ask ChatGPT to do this?
+        You can try. Ask it to profile pharmacogenes from a 23andMe file. It'll
+        write plausible Python. But it'll hallucinate star allele calls. It'll
+        use outdated CPIC guidelines. It won't know that CYP2D6 *4 is no-function,
+        not just reduced. You'll spend 45 minutes debugging output that looks right
+        but isn't. ClawBio encodes the correct bioinformatics decisions so the agent
+        gets it right first time, every time. The skill is a domain expert's judgement,
+        frozen into code. Let me show you what that looks like."
         TIMING: 3 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 11b: WHAT IS CLAWBIO? -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>🦖 What Is ClawBio?</h2>
+    <div class="content center">
+        <ul>
+            <li><span class="accent">The first bioinformatics-native skill library</span> for AI coding agents</li>
+            <li>Built on <span class="accent">OpenClaw</span> — 180,000+ GitHub stars, the fastest-growing open-source AI project</li>
+            <li>A <strong>skill</strong> = a domain expert's knowledge <span class="green">frozen into code</span> that an agent executes correctly every time</li>
+            <li><span class="accent">Local-first</span>: your genomic data never leaves your laptop</li>
+            <li><span class="accent">MIT licensed</span>: open-source, free, community-driven</li>
+        </ul>
+        <p class="gap">Think of it this way:</p>
+        <pre class="gap" style="font-size: clamp(0.75rem, 1.3vw, 1rem);">
+<span class="out">ChatGPT/Claude</span> = a smart generalist who <span class="red">guesses</span> at bioinformatics
+<span class="green">🦖 ClawBio skill</span> = a domain expert's <span class="green">proven pipeline</span> that the AI <em>executes</em></pre>
+        <p class="gap small">Not a web app. Not a SaaS. Expert skills that run on your machine.</p>
+    </div>
+    <div class="notes">
+        "So what exactly is ClawBio? It's the first bioinformatics-native skill library
+        for AI coding agents. It's built on OpenClaw — which has over 180,000 stars on
+        GitHub and is the fastest-growing open-source AI project right now.
+
+        Here's the key concept: a skill is a domain expert's judgement, frozen into code.
+        When an AI agent needs to do pharmacogenomics or ancestry analysis, instead of
+        hallucinating an answer, it loads the ClawBio skill and executes it correctly
+        every time. The difference: ChatGPT guesses at bioinformatics. A ClawBio skill
+        is a proven pipeline that the AI executes. Everything runs locally — your genomic
+        data never leaves your laptop. MIT licensed, fully open-source."
+        TIMING: 2 min
     </div>
 </section>
 
@@ -408,7 +460,7 @@ representation using heterozygosity and FST..."</span></pre>
 <!-- SLIDE 12: OPENCLAW BIO ARCHITECTURE -->
 <!-- ============================================================ -->
 <section class="slide">
-    <h2>ClawBio: Architecture</h2>
+    <h2>🦖 ClawBio: Architecture</h2>
     <div class="content">
         <pre style="font-size: clamp(0.75rem, 1.3vw, 1rem);">
 User: "Analyse the diversity in my VCF file"
@@ -444,28 +496,29 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
 <!-- SLIDE 13: SKILL CATALOGUE -->
 <!-- ============================================================ -->
 <section class="slide">
-    <h2>9 Skills — 3 MVP, 6 Planned</h2>
+    <h2>🦖 Skills — 4 MVP, 7 Planned</h2>
     <div class="content">
         <div class="two-col">
             <ul>
-                <li><span class="green">Equity Scorer</span> — HEIM diversity metrics <span class="small">[MVP]</span></li>
-                <li><span class="green">PharmGx Reporter</span> — 12 genes, 51 drugs, CPIC <span class="small">[MVP]</span></li>
-                <li><span class="green">Bio Orchestrator</span> — routing + reporting <span class="small">[MVP]</span></li>
-                <li><span class="accent">VCF Annotator</span> — VEP + ClinVar + gnomAD</li>
+                <li><span class="green">claw-pharmgx</span> — 12 genes, 51 drugs, CPIC <span class="small">[MVP]</span></li>
+                <li><span class="green">claw-ancestry-pca</span> — PCA vs SGDP (164 pops) <span class="small">[MVP]</span></li>
+                <li><span class="green">claw-semantic-sim</span> — PubMedBERT disease isolation <span class="small">[MVP]</span></li>
+                <li><span class="green">claw-orchestrator</span> — routing + reporting <span class="small">[MVP]</span></li>
+                <li><span class="accent">claw-equity-scorer</span> — HEIM diversity index</li>
             </ul>
             <ul>
-                <li><span class="accent">Lit Synthesizer</span> — PubMed + LLM summaries</li>
-                <li><span class="accent">scRNA Orchestrator</span> — Scanpy automation</li>
-                <li><span class="accent">Struct Predictor</span> — AlphaFold/Boltz local</li>
-                <li><span class="accent">Seq Wrangler</span> — FastQC + alignment</li>
-                <li><span class="accent">Repro Enforcer</span> — Conda/Nextflow export</li>
+                <li><span class="accent">claw-vcf-annotator</span> — VEP + ClinVar + gnomAD</li>
+                <li><span class="accent">claw-lit-synth</span> — PubMed + LLM summaries</li>
+                <li><span class="accent">claw-scrna</span> — Scanpy automation</li>
+                <li><span class="accent">claw-struct-predict</span> — AlphaFold/Boltz local</li>
+                <li><span class="accent">claw-repro</span> — Conda/Nextflow export</li>
             </ul>
         </div>
         <p class="gap center small">Each skill = a <code>SKILL.md</code> + Python scripts. Composable. Local-first. Auditable.</p>
     </div>
     <div class="notes">
-        Here's the current roadmap. Three skills are already at MVP: the Equity Scorer,
-        the PharmGx Reporter, and the Bio Orchestrator. Six more are planned.
+        Here's the current roadmap. Four skills are at MVP: PharmGx Reporter,
+        Ancestry PCA, Semantic Similarity, and the Bio Orchestrator. Seven more planned.
         The PharmGx Reporter takes a 23andMe file, profiles 12 pharmacogenes, and
         generates CPIC drug recommendations for 51 medications. Zero dependencies,
         runs in under a second.
@@ -474,153 +527,30 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 14: TIP 9 — LIVE DEMO INTRO -->
+<!-- SLIDE 14: TIP 9 — LIVE DEMO INTRO (PharmGx FIRST) -->
 <!-- ============================================================ -->
 <section class="slide">
     <div class="tip-num">Tip 9</div>
     <h2>Build Modular Skills</h2>
-    <h3>Live Demo: Equity Scorer</h3>
+    <h3>Live Demo: "I just got my 23andMe results."</h3>
     <div class="content center">
-        <p>Input: a VCF file with 50 samples across 5 populations</p>
-        <p class="gap">Output: HEIM Equity Score + 5 figures + full report</p>
+        <p>Question: <span class="accent" style="font-size:1.1em">"What drugs should I worry about?"</span></p>
+        <p class="gap">One command. Under 1 second. Entirely on your laptop.</p>
         <pre class="gap">
-<span class="cmd">$ python equity_scorer.py \
-    --input demo_populations.vcf \
-    --pop-map demo_population_map.csv \
-    --output demo_report</span></pre>
+<span class="cmd">$ python pharmgx_reporter.py --input demo_patient.txt --output report</span></pre>
         <p class="gap small">Let's run it.</p>
     </div>
     <div class="notes">
-        Tip 9: build modular skills. Let me show you what one looks like.
-        The Equity Scorer takes a VCF file, computes real population genetics
-        metrics — heterozygosity, FST, PCA — and outputs a HEIM Equity Score
-        that measures how well your dataset represents global population diversity.
-        Let me run it live.
-        TIMING: Switch to terminal. Run the command. ~30 sec to execute.
+        "Let me show you what a ClawBio skill looks like. Here's the scenario:
+        I just got my 23andMe results back. I want to know which drugs might not
+        work for me. With ChatGPT, I'd spend 45 minutes debugging hallucinated
+        star alleles. With ClawBio, I type one command."
+        TIMING: Switch to terminal. Run PharmGx. ~1 sec to execute.
     </div>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 15: DEMO — TERMINAL OUTPUT -->
-<!-- ============================================================ -->
-<section class="slide">
-    <h2>Demo: Terminal Output</h2>
-    <div class="content">
-        <pre>
-<span class="cmd">Parsing VCF...</span>
-  50 samples, 500 variants
-  Populations: AFR (n=8), AMR (n=5), EAS (n=7), EUR (n=22), SAS (n=8)
-
-<span class="cmd">Computing heterozygosity...</span>
-  AFR: obs=<span class="val">0.3543</span>  exp=0.3338
-  EAS: obs=<span class="val">0.3014</span>  exp=0.2788   ← lowest diversity
-
-<span class="cmd">Computing pairwise FST...</span>
-  AFR vs EAS: <span class="val">0.1011</span>   ← highest divergence
-  AMR vs EUR: <span class="val">0.0425</span>   ← lowest (admixture)
-
-<span class="cmd">Computing PCA...</span>
-  PC1: 7.6%  PC2: 4.9%
-
-<span class="cmd">HEIM Score: <span class="val">76.2/100 (Good)</span></span></pre>
-    </div>
-    <div class="notes">
-        Walk through the terminal output. Highlight: AFR has highest heterozygosity
-        (as expected from out-of-Africa). AFR vs EAS has highest FST. The HEIM
-        score is 76 out of 100 — "Good" but not "Excellent" because EUR is
-        overrepresented at 44%.
-        TIMING: 2 min. If live demo failed, show this slide as fallback.
-    </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- SLIDE 16: DEMO — PCA -->
-<!-- ============================================================ -->
-<section class="slide">
-    <h2>PCA: Population Structure</h2>
-    <img src="img/pca_plot.png" alt="PCA scatter plot showing 5 population clusters" class="full-img">
-    <div class="notes">
-        PCA plot. Five clear clusters: AFR on the right, EAS top-left, EUR
-        bottom-left, SAS in the middle, AMR between EUR and AFR (reflecting
-        admixture). This is from 500 synthetic SNPs with realistic allele frequency
-        differentiation.
-        TIMING: 1 min
-    </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- SLIDE 17: DEMO — FST HEATMAP -->
-<!-- ============================================================ -->
-<section class="slide">
-    <h2>Pairwise FST: Population Divergence</h2>
-    <img src="img/fst_heatmap.png" alt="FST heatmap showing pairwise population divergence" class="full-img">
-    <div class="notes">
-        FST heatmap. Darkest cell: AFR vs EAS at 0.10 — consistent with known
-        human population genetics. Lightest: AMR vs EUR at 0.04, reflecting shared
-        ancestry through admixture. All computed locally from the genotype matrix.
-        TIMING: 1 min
-    </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- SLIDE 18: DEMO — ANCESTRY + HET -->
-<!-- ============================================================ -->
-<section class="slide">
-    <h2>Ancestry Distribution + Heterozygosity</h2>
-    <div class="two-col content">
-        <img src="img/ancestry_bar.png" alt="Ancestry distribution bar chart" class="small-img">
-        <img src="img/heterozygosity.png" alt="Heterozygosity comparison chart" class="small-img">
-    </div>
-    <p class="center small gap">Red dashes = global proportions. EUR at 44% is 2.75x overrepresented.</p>
-    <div class="notes">
-        Left: ancestry distribution. The red dashed lines show global proportions.
-        EUR is massively overrepresented — a typical UK biobank skew.
-        Right: heterozygosity. AFR has the highest observed Het, EAS the lowest.
-        This is exactly what population genetics predicts from the out-of-Africa model.
-        TIMING: 1.5 min
-    </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- SLIDE 19: DEMO — HEIM SCORE -->
-<!-- ============================================================ -->
-<section class="slide">
-    <h2>HEIM Equity Score</h2>
-    <img src="img/heim_gauge.png" alt="HEIM score gauge showing 76/100" style="max-height: 25vh;">
-    <div class="content center gap">
-        <div class="two-col" style="max-width: 800px; margin: 0 auto;">
-            <div>
-                <p><strong>Score Breakdown</strong></p>
-                <ul style="max-width:100%">
-                    <li>Representation Index: <span class="val">0.720</span></li>
-                    <li>Heterozygosity Balance: <span class="val">0.667</span></li>
-                    <li>FST Coverage: <span class="green">1.000</span></li>
-                    <li>Geographic Spread: <span class="val">0.714</span></li>
-                </ul>
-            </div>
-            <div>
-                <p><strong>What This Means</strong></p>
-                <ul style="max-width:100%">
-                    <li>EUR 2.75x overrepresented</li>
-                    <li>EAS and SAS underrepresented</li>
-                    <li>5 of 7 continental groups present</li>
-                    <li><span class="green">All pairwise FST computed</span></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="notes">
-        The HEIM Equity Score: 76 out of 100. Representation index drags it down
-        because EUR is overrepresented. Good geographic spread — 5 of 7 continental
-        groups. All pairwise FST computed. This single number tells a study
-        coordinator: "your cohort has reasonable diversity but needs more EAS and SAS
-        participants."
-        TIMING: 2 min
-    </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- SLIDE 20: PHARMGX DEMO — TERMINAL -->
+<!-- SLIDE 15: PHARMGX DEMO — TERMINAL -->
 <!-- ============================================================ -->
 <section class="slide">
     <h2>Demo: PharmGx Reporter</h2>
@@ -649,19 +579,18 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
   * Amitriptyline, Nortriptyline, Desipramine... (7 TCAs)</pre>
     </div>
     <div class="notes">
-        Second demo. This is the PharmGx Reporter. It takes a 23andMe raw data
-        file, profiles 12 pharmacogenes, and looks up CPIC recommendations for
-        51 drugs. This patient is CYP2D6 *4/*4 — a Poor Metabolizer. That means
-        codeine won't work (it can't convert to morphine), tramadol won't work,
-        and seven tricyclic antidepressants should be avoided. This is real
-        pharmacogenomics — the same logic that clinical labs use — running locally
-        in under one second.
-        TIMING: 2 min
+        "That took less than one second. This patient is CYP2D6 *4/*4 — a Poor
+        Metabolizer. Codeine literally cannot work for them. Their body can't
+        convert it to morphine. Tramadol same thing. And seven tricyclic
+        antidepressants should be avoided. 10 drugs flagged AVOID. 20 flagged
+        CAUTION. I didn't tell the tool which genes to check. I didn't specify
+        which guidelines to follow. That domain knowledge is baked into the skill."
+        TIMING: 2 min. If live demo failed, show this slide as fallback.
     </div>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 21: PHARMGX DEMO — REPORT -->
+<!-- SLIDE 16: PHARMGX DEMO — REPORT -->
 <!-- ============================================================ -->
 <section class="slide">
     <h2>PharmGx Report: Gene Profiles</h2>
@@ -715,18 +644,17 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
         <p class="small">12 genes profiled. 51 drugs assessed. Zero dependencies. Under 1 second.</p>
     </div>
     <div class="notes">
-        Here's the gene profile table from the report. CYP2D6 *4/*4 is the
-        headline — this single gene affects 22 drugs. Codeine literally cannot
-        work in this patient because CYP2D6 converts codeine to morphine, and
-        *4/*4 means no enzyme activity. DPYD is normal, which means this patient
-        is safe for fluorouracil chemotherapy. This is the kind of actionable
-        information that matters for precision medicine.
+        "CYP2D6 *4/*4 is the headline — this single gene affects 22 drugs.
+        Codeine literally cannot work because CYP2D6 converts codeine to morphine,
+        and *4/*4 means zero enzyme activity. DPYD is normal — safe for 5-FU chemo.
+        This is the same logic that clinical pharmacogenomics labs use. Running on
+        your laptop. No data sent anywhere. Under one second."
         TIMING: 2 min
     </div>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 22: PHARMGX — WHY IT MATTERS -->
+<!-- SLIDE 17: PHARMGX — WHY IT MATTERS -->
 <!-- ============================================================ -->
 <section class="slide">
     <h2>Why Pharmacogenomics Matters</h2>
@@ -736,77 +664,277 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
             <li><span class="red">~2%</span> are CYP2C19 Poor Metabolizers — clopidogrel <span class="red">won't prevent</span> their next heart attack</li>
             <li><span class="red">0.5%</span> carry DPYD variants — standard 5-FU dose can be <span class="red">lethal</span></li>
         </ul>
-        <p class="gap">One command. 51 drugs assessed. A report your GP can read.</p>
-        <pre class="gap">
-<span class="cmd">$ python pharmgx_reporter.py --input my_23andme.txt --output my_report</span></pre>
+        <p class="gap">That was one skill. One command. Now let me zoom out to the systemic problem.</p>
         <p class="gap small">Based on CPIC guidelines (cpicpgx.org). For research use; not a diagnostic device.</p>
     </div>
     <div class="notes">
-        Why does pharmacogenomics matter? About 7% of Caucasians are CYP2D6
-        poor metabolizers. Codeine literally does nothing for them because they
-        cannot convert it to morphine. 2% are CYP2C19 poor metabolizers, and
-        clopidogrel won't protect them after a stent. And about 0.5% carry DPYD
-        variants where a standard dose of 5-FU chemotherapy can be fatal.
-        This tool lets you check all of that from a consumer genetic test in
-        under a second.
-        TIMING: 2 min
+        "7% of people in this room might be CYP2D6 poor metabolizers. If you
+        take codeine after surgery, you get zero pain relief. 2% are CYP2C19
+        poor metabolizers — clopidogrel won't protect them after a stent. And
+        0.5% carry DPYD variants where a standard 5-FU chemo dose can kill you.
+        That was the personal level. Now let me show you the systemic level."
+        TIMING: 1.5 min
     </div>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 23: WHY THIS MATTERS -->
+<!-- SLIDE 18: ANCESTRY PCA DEMO -->
 <!-- ============================================================ -->
 <section class="slide">
-    <h2>Why This Matters</h2>
+    <h2>Demo 2: Ancestry Decomposition PCA</h2>
     <div class="content center">
-        <ul>
-            <li><span class="red">86%</span> of GWAS participants are of European ancestry</li>
-            <li>Polygenic risk scores <span class="red">fail</span> across populations</li>
-            <li>The HEIM Index gives you a <span class="accent">single number</span> to quantify the problem</li>
-        </ul>
-        <p class="gap">Every dataset. Every study. Every biobank. <span class="highlight">Score it.</span></p>
-        <p class="gap small">Paper in review: Corpas, M. (2026). "HEIM: Health Equity Index for Minorities"</p>
+        <p>Question: <span class="accent" style="font-size:1.1em">"Where does my cohort sit in global genetic space?"</span></p>
+        <p class="gap">736 Peruvian samples &middot; 28 indigenous populations &middot; vs. SGDP (345 samples, 164 global populations)</p>
+        <pre class="gap">
+<span class="cmd">$ python ancestry_pca.py --demo --output ancestry_report</span>
+
+<span class="cmd">Ancestry Decomposition PCA</span>
+  Cohort: <span class="val">736</span> samples, <span class="val">28</span> populations
+  Reference: SGDP (<span class="val">345</span> samples, <span class="val">164</span> populations)
+  Common variants: <span class="val">42,831</span> biallelic SNPs
+
+  Variance: PC1=<span class="val">51.4%</span>  PC2=<span class="val">21.7%</span>  PC3=<span class="val">6.7%</span>
+
+  Generating 4-panel figure...
+  <span class="green">Done.</span> Saved to ancestry_report/</pre>
     </div>
     <div class="notes">
-        Why does this matter? 86% of GWAS participants are European. Polygenic risk
-        scores trained on European data perform poorly in African, Asian, and
-        Indigenous populations. This is not just an academic problem — it's a health
-        equity crisis. The HEIM Index gives researchers a simple metric to quantify
-        and track this gap. Score your dataset. Report it alongside your demographics.
-        TIMING: 2 min
+        "Second skill. Same principle — one command, works out of the box.
+        The reference panel is the Simons Genome Diversity Project: 345 samples
+        from 164 populations spanning every inhabited continent. The skill finds
+        common variants, runs PCA on the merged set, and generates a 4-panel
+        figure. I didn't tell it which reference to use, how to normalise contigs,
+        or how to handle IBD. That's baked in."
+        TIMING: 1.5 min
     </div>
 </section>
 
 <!-- ============================================================ -->
-<!-- SLIDE 21: TIP 10 — CTA -->
+<!-- SLIDE 19: ANCESTRY PCA — FULL FIGURE -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>Ancestry PCA: Peru vs 164 Global Populations</h2>
+    <img src="img/ancestry_pca_composite.png" alt="4-panel PCA composite: Peru 736 samples against SGDP 345 samples" class="full-img">
+    <div class="notes">
+        "Four panels. Top-left: PC1 vs PC2 showing the internal structure of
+        28 Peruvian populations. Top-right: regional groupings — Highland in red,
+        Amazonian in green, Coastal in blue. Bottom-left: linguistic groupings —
+        Quechua and Aymara. And bottom-right — the money shot: Peru against the
+        Simons Genome Diversity Project. Circles are Peru, triangles are SGDP.
+        You can see exactly where indigenous Peruvian populations sit relative
+        to 164 global populations."
+        TIMING: 2 min. Let the figure breathe. Point to Panel D.
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 20: ANCESTRY PCA — WHAT IT TELLS US -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>What This Tells Us</h2>
+    <div class="content center">
+        <ul>
+            <li>Amazonian groups (Matzes, Awajun, Candoshi) are <span class="accent">genetically distinct</span> from all SGDP populations</li>
+            <li>Highland Quechua and Aymara speakers form <span class="accent">separate clusters</span> in PC3</li>
+            <li>Coastal populations show <span class="orange">European admixture</span> visible in the PCA</li>
+            <li>These populations are <span class="red">absent from most GWAS</span></li>
+        </ul>
+        <p class="gap">That figure is from a paper we're writing on the Peruvian Genome Project.</p>
+        <p class="gap">But there's a deeper problem. Even when diseases <em>are</em> studied, their research <span class="red">doesn't connect</span>.</p>
+    </div>
+    <div class="notes">
+        "Panel D is the key. Amazonian indigenous groups like the Matzes sit in
+        genetic space that no SGDP population occupies. They are genuinely
+        underrepresented — not just in GWAS, but in the reference panels we use
+        to study diversity. And yet a drug like codeine works differently in
+        these populations because of pharmacogenomic variants we haven't studied.
+        That's the connection between the two demos: personal pharmacogenomics
+        and population-level representation are the same equity problem.
+
+        But here's the bigger idea. That figure is from a paper we're writing.
+        When we publish, anyone can reproduce it with one command. Not 'code
+        available on GitHub' — where you spend two days fixing broken
+        dependencies and hardcoded paths. One command. Identical figure.
+        Checksums to prove it. That's what reproducibility should look like."
+        TIMING: 2.5 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 21: SEMANTIC SIMILARITY INDEX DEMO -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>Demo 3: Semantic Similarity Index</h2>
+    <div class="content center">
+        <p>Question: <span class="accent" style="font-size:1.1em">"Which diseases are trapped in knowledge silos?"</span></p>
+        <p class="gap">175 GBD diseases &middot; 13.1M PubMed abstracts &middot; PubMedBERT embeddings (768-dim)</p>
+        <pre class="gap">
+<span class="cmd">$ python semantic_sim.py --demo --output sem_report</span>
+
+<span class="cmd">Semantic Similarity Index</span>
+  Diseases analysed: <span class="val">175</span>
+  Abstracts embedded: <span class="val">13,100,000</span>
+  Model: PubMedBERT (768-dim, Apple MPS)
+
+  SII range: <span class="val">0.041</span> - <span class="val">0.189</span>
+
+  <span class="red">NTDs show +38% higher semantic isolation</span>
+  P &lt; 0.0001, Cohen's d = 0.84
+  <span class="orange">14/25 most isolated = Global South priority</span>
+
+  <span class="green">Done.</span> Saved to sem_report/</pre>
+    </div>
+    <div class="notes">
+        "Third skill. Same principle — one command. But now the question is systemic:
+        which diseases are trapped in knowledge silos? We embedded 13.1 million PubMed
+        abstracts with PubMedBERT and computed a Semantic Isolation Index for every
+        GBD disease. The result: neglected tropical diseases are 38% more isolated
+        than other conditions. They exist in knowledge silos with almost no
+        cross-disciplinary research bridges."
+        TIMING: 1.5 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 22: SEMANTIC SIMILARITY — FULL FIGURE -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>Semantic Structure of Disease Research</h2>
+    <img src="img/semantic_structure_analysis.png" alt="4-panel semantic analysis: SII by category, Top 20 isolated, SII vs volume, NTD significance" class="full-img">
+    <div class="notes">
+        "Four panels again. Top-left: semantic isolation by disease category —
+        notice Injuries and Infectious diseases at the top. Top-right: the 20
+        most isolated diseases — 14 of the top 25 are Global South priority
+        conditions, shown in red and orange. Bottom-left: the inverse correlation
+        between research volume and isolation — the less you study a disease,
+        the more isolated its research becomes. A vicious cycle. Bottom-right:
+        NTDs versus everything else — statistically significant, large effect size.
+        This is structural neglect made visible through language models."
+        TIMING: 2 min. Let the figure breathe. Point to Panel D.
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 23: WHY SEMANTIC ISOLATION MATTERS -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>Knowledge Silos Kill Innovation</h2>
+    <div class="content center">
+        <ul>
+            <li>A breakthrough in <span class="accent">malaria immunology</span> could help <span class="accent">leishmaniasis</span> — but the literatures don't talk to each other</li>
+            <li>Drug repurposing depends on <span class="accent">cross-disease bridges</span> that don't exist for NTDs</li>
+            <li>The less a disease is studied, the more isolated it becomes — <span class="red">a vicious cycle</span></li>
+            <li>This metric didn't exist before. Now it takes <span class="green">one command</span>.</li>
+        </ul>
+        <p class="gap">Three skills. Three scales: <span class="accent">personal</span> (drugs), <span class="accent">population</span> (ancestry), <span class="accent">systemic</span> (knowledge).</p>
+        <p class="gap small">Corpas et al. (2026). HEIM: Health Equity Index for Measuring structural bias in biomedical research. Under review.</p>
+    </div>
+    <div class="notes">
+        "This is why it matters. A malaria immunology breakthrough could help
+        leishmaniasis, but those two literatures barely overlap. Drug repurposing
+        depends on cross-disease bridges, and NTDs have almost none.
+        Three demos tonight, three scales: personal pharmacogenomics, population
+        ancestry, and systemic knowledge silos. Each one took days, not months.
+        Each one runs with one command. That's what ClawBio makes possible."
+        TIMING: 1.5 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 24: REPRODUCIBILITY IS BROKEN -->
+<!-- ============================================================ -->
+<section class="slide">
+    <h2>The Reproducibility Crisis, In Practice</h2>
+    <div class="two-col content">
+        <div>
+            <h3 style="text-align:left"><span class="red">Today</span>: Checking a Paper's Code</h3>
+            <ul style="max-width:100%">
+                <li>Read paper. Want to verify Figure 3.</li>
+                <li>Go to GitHub. Clone the repo.</li>
+                <li>Wrong Python version. Fix dependencies.</li>
+                <li>Need the reference data. Where is it?</li>
+                <li>Download 2GB from Zenodo. <span class="red">Link is dead.</span></li>
+                <li>Email first author. <span class="orange">Wait 3 weeks.</span></li>
+                <li>Paths: <code>/home/jsmith/data/</code></li>
+                <li><span class="red">2 days later: still broken.</span></li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="text-align:left"><span class="green">With Skills</span>: Same Paper</h3>
+            <ul style="max-width:100%">
+                <li>Read paper. Want to verify Figure 3.</li>
+                <li>Install the paper's published skill.</li>
+                <li><code style="color:#3fb950">python ancestry_pca.py --demo</code></li>
+                <li><span class="green">Figure 3 appears. Identical.</span></li>
+                <li>SHA-256 checksum: <span class="green">verified.</span></li>
+                <li>Dependencies: <span class="green">resolved automatically.</span></li>
+                <li>Reference data: <span class="green">bundled.</span></li>
+                <li><span class="green" style="font-weight:700">30 seconds. Done.</span></li>
+            </ul>
+        </div>
+    </div>
+    <p class="gap center small">Every figure in your paper should be <span class="highlight">one command</span> away from reproduction.</p>
+    <div class="notes">
+        "How many of you have tried to reproduce a figure from a paper using the
+        authors' GitHub code? [Pause for reactions.] Let me walk you through what
+        actually happens.
+
+        You read a paper. Interesting result. You want to check the code. So you
+        go to GitHub, clone the repo. Wrong Python version. Dependencies are broken.
+        You need the reference data — where is it? There's a Zenodo link. It's dead.
+        You email the first author. Three weeks later they reply with a Dropbox link.
+        The paths are hardcoded to /home/jsmith/data/. Two days in, you still can't
+        reproduce one figure. Most people give up.
+
+        Now imagine the same paper published a skill. You install it. You run one
+        command. Figure 3 appears. Identical. SHA-256 checksum verified. 30 seconds.
+
+        That's the shift. Not 'code available on request' — code that actually works,
+        out of the box, on anyone's machine. The ancestry PCA figure I just showed you?
+        That's from a paper we're writing. When we publish, anyone will reproduce it
+        with one command. That's what reproducibility should look like."
+        TIMING: 3 min
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 23: TIP 10 — CTA -->
 <!-- ============================================================ -->
 <section class="slide">
     <div class="tip-num">Tip 10</div>
-    <h2>Create Infrastructure That Ships Your Research</h2>
+    <h2>Publish Skills, Not Just Papers</h2>
     <div class="content center">
         <ul>
-            <li>The Equity Scorer took <span class="accent">2 days</span> to build</li>
-            <li>It computes real Het, FST, PCA from genotype data</li>
-            <li>It generates a reproducible, publication-ready report</li>
-            <li>Anyone can build the next skill</li>
+            <li>claw-pharmgx took <span class="accent">2 days</span> to build. 12 genes, 51 drugs, CPIC guidelines.</li>
+            <li>claw-ancestry-pca wraps a <span class="accent">real publication pipeline</span>. One command reproduces Figure 3.</li>
+            <li>claw-semantic-sim embeds <span class="accent">13.1M abstracts</span> and reveals which diseases are trapped in knowledge silos.</li>
+            <li>Every skill ships with checksums, audit logs, and a reproducibility bundle.</li>
         </ul>
         <div class="gap">
             <p style="font-size:1.3em"><strong>Skills we need from <span class="accent">you</span>:</strong></p>
             <ul>
-                <li><span class="orange">GWAS Pipeline</span> — PLINK/REGENIE automation</li>
-                <li><span class="orange">Metagenomics Classifier</span> — Kraken2/MetaPhlAn wrapper</li>
-                <li><span class="orange">Clinical Variant Reporter</span> — ACMG classification</li>
-                <li><span class="orange">Pathway Enricher</span> — GO/KEGG enrichment</li>
+                <li><span class="orange">claw-gwas</span> — PLINK/REGENIE automation</li>
+                <li><span class="orange">claw-metagenomics</span> — Kraken2/MetaPhlAn wrapper</li>
+                <li><span class="orange">claw-acmg</span> — Clinical variant classification</li>
+                <li><span class="orange">claw-pathway</span> — GO/KEGG enrichment</li>
             </ul>
         </div>
     </div>
     <div class="notes">
-        Tip 10: build infrastructure that ships your research. The Equity Scorer
-        took 2 days. It's real population genetics, not a toy. And anyone in this
-        room can build the next skill. Do you work with GWAS? Build a PLINK wrapper.
-        Metagenomics? Wrap Kraken2. Clinical genetics? Build an ACMG classifier.
-        The template is there. The orchestrator routes to your skill automatically.
-        TIMING: 2 min
+        "Tip 10: publish skills, not just papers. claw-pharmgx took 2 days to
+        build. claw-ancestry-pca wraps a real publication pipeline — the figure
+        you just saw is from a paper in preparation, and anyone will be able to
+        reproduce it with one command.
+
+        Think about your own work. That GWAS pipeline you run every time? Make
+        it a skill. That metagenomics classifier? Make it a skill. That clinical
+        variant interpretation workflow? Wrap it. The template is there. The
+        orchestrator routes to your skill automatically.
+
+        Imagine a world where every bioinformatics paper ships with a ClawBio
+        skill. You read the paper, you run the skill, you get the exact figures.
+        That's the world we're building."
+        TIMING: 2.5 min
     </div>
 </section>
 
@@ -821,30 +949,35 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
         </p>
         <div class="two-col" style="max-width: 700px; margin: 0 auto;">
             <div>
-                <p><strong>Repository</strong></p>
+                <p><strong>Run Tonight</strong></p>
                 <ul style="max-width:100%">
-                    <li>9 skills (3 MVP, 6 planned)</li>
-                    <li>SKILL-TEMPLATE.md</li>
-                    <li>Architecture docs</li>
-                    <li>Demo dataset + report</li>
+                    <li>claw-pharmgx: your 23andMe drug report</li>
+                    <li>claw-ancestry-pca: your cohort vs SGDP</li>
+                    <li>claw-semantic-sim: disease knowledge silos</li>
+                    <li>All work out of the box with demo data</li>
                 </ul>
             </div>
             <div>
-                <p><strong>Next Steps</strong></p>
+                <p><strong>Build Next</strong></p>
                 <ul style="max-width:100%">
-                    <li>Star the repo</li>
-                    <li>Run the Equity Scorer</li>
-                    <li>Copy the skill template</li>
-                    <li>Submit a PR with your skill</li>
+                    <li>Copy SKILL-TEMPLATE.md</li>
+                    <li>Wrap your publication pipeline</li>
+                    <li>Submit a PR — I'll review it personally</li>
                 </ul>
             </div>
         </div>
-        <p class="gap small">MIT licensed. Clone it, run it, build a skill, submit a PR.</p>
+        <p class="gap small">🦖 MIT licensed. Every paper deserves a reproducible skill.</p>
     </div>
     <div class="notes">
-        Here's how to get involved. The repo goes live tonight. Star it, clone it,
-        run the Equity Scorer on your own data. If you want to build a skill,
-        copy the template, and open a PR. The contributing guide walks you through it.
+        "The repo is live now. Tonight you can run both demos on your own data.
+        claw-pharmgx works with any 23andMe or AncestryDNA file. claw-ancestry-pca
+        works with any VCF and population map. Both include demo data so you can
+        try them immediately.
+
+        If you want to build the next skill, the template is there. Think about
+        the analysis you run most often. The one where you copy-paste the same
+        pipeline every time. Wrap it as a skill. Submit a PR. I'll review it
+        personally."
         TIMING: 1.5 min
     </div>
 </section>
@@ -893,7 +1026,7 @@ Scorer   Reporter   Annotator  Synthesizer Orchestrator</span>
         <p><span class="accent">LinkedIn</span>: linkedin.com/in/manuelcorpas</p>
         <p><span class="accent">X</span>: @manuelcorpas</p>
     </div>
-    <p class="gap small">Slides: github.com/manuelcorpas/ClawBio/slides</p>
+    <p class="gap small">🦖 Slides: github.com/manuelcorpas/ClawBio/slides</p>
     <div class="notes">
         Thank you. I'll be at the pub after — come talk to me if you want to
         build a skill, have ideas for the library, or just want to chat about

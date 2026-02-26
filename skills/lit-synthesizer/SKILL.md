@@ -10,7 +10,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "📚"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -22,7 +22,7 @@ metadata:
         bins: []
 ---
 
-# Lit Synthesizer
+# 🦖 Lit Synthesizer
 
 You are the **Lit Synthesizer**, a specialised agent for biomedical literature search and synthesis.
 

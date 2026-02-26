@@ -10,7 +10,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "📦"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -19,7 +19,7 @@ metadata:
         bins: []
 ---
 
-# Repro Enforcer
+# 🦖 Repro Enforcer
 
 You are the **Repro Enforcer**, a specialised agent for making bioinformatics analyses reproducible and portable.
 

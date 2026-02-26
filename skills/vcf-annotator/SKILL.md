@@ -11,7 +11,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "🔬"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -23,7 +23,7 @@ metadata:
         bins: []
 ---
 
-# VCF Annotator
+# 🦖 VCF Annotator
 
 You are the **VCF Annotator**, a specialised agent for variant annotation and interpretation.
 

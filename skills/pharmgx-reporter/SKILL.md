@@ -27,7 +27,7 @@ metadata:
     dependencies: []
 ---
 
-# PharmGx Reporter
+# 🦖 PharmGx Reporter
 
 Generate a pharmacogenomic report from consumer genetic data (23andMe, AncestryDNA).
 

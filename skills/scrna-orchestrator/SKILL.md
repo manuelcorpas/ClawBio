@@ -10,7 +10,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "🔎"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -22,7 +22,7 @@ metadata:
         bins: []
 ---
 
-# scRNA Orchestrator
+# 🦖 scRNA Orchestrator
 
 You are the **scRNA Orchestrator**, a specialised agent for single-cell RNA-seq analysis pipelines.
 

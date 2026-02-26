@@ -1,7 +1,7 @@
 # Speaker Notes — 10 Tips for Becoming a Top 1% AI User
 
-Total talk time: 40-45 minutes + Q&A
-24 slides. Average ~1.5 min per slide, with demo taking ~5 min.
+Total talk time: 45-50 minutes + Q&A
+28 slides. PharmGx first (visceral), Ancestry PCA (population), Semantic Similarity (systemic), then reproducibility framing.
 
 ---
 
@@ -9,7 +9,7 @@ Total talk time: 40-45 minutes + Q&A
 
 "Welcome everyone. I'm Manuel Corpas, Senior Lecturer at the University of Westminster and Turing Fellow. Tonight I want to share 10 practical techniques that separate casual AI users from the top 1% who are shipping research faster than ever."
 
-"This is about AI fluency: the habits, tools, and workflows that compound your productivity. We'll go from quick wins you can adopt tomorrow morning, to building your own open-source bioinformatics skills. And I've got a live demo of something I built this week."
+"We'll start with quick wins you can adopt tomorrow morning, and end with two live demos — including one where I'll show you which drugs won't work based on a genetic test."
 
 ---
 
@@ -23,178 +23,195 @@ Total talk time: 40-45 minutes + Q&A
 
 ---
 
-## Slide 3: Tip 1 (2 min)
+## Slides 3-9: Tips 1-7 (13 min)
 
-"Tip 1 is the lowest-hanging fruit. Stop going to a browser to talk to AI. Put it inside your development environment."
-
-"I use Claude Code in my terminal. It reads my entire codebase, understands the file structure, edits files directly, runs tests, and commits to git. It's not a chatbot. It's a pair programmer that knows your whole project."
-
-"If you do one thing after tonight, install Claude Code."
-
----
-
-## Slide 4: Tip 2 (2 min)
-
-"Tip 2: build a prompt library. Every time you start a new Claude session, it reads a CLAUDE.md file at your project root. This is your AI onboarding document."
-
-"Mine contains Python standards, architecture rules, path patterns, common commands. I never have to repeat instructions. The AI already knows how my project works."
-
-"Treat your CLAUDE.md like you'd treat onboarding docs for a new team member. The better the docs, the better the AI performs."
-
----
-
-## Slide 5: Tip 3 (2 min)
-
-"Tip 3: memory. The biggest limitation of AI is that every conversation starts from zero. You solve this with a RAG pipeline."
-
-"I embed my research notes, emails, publications, meeting transcripts, and session histories into ChromaDB. Then I can query semantically: 'What did I decide about the Wellcome proposal?' and get a real answer with source citations."
-
-"I built my own RAG system for this. It is the foundation everything else builds on. The key insight: once your AI has memory, it stops being a chatbot and becomes a research partner."
-
----
-
-## Slide 6: Tip 4 (1.5 min)
-
-"Tip 4: use voice. Your brain outputs ideas faster as speech than typing. I run Whisper locally on Apple Silicon. Record a 5-minute voice memo, transcribe it, feed it to Claude for structuring."
-
-"This is how I draft paper sections, plan projects, capture ideas on walks. Dictation is faster and often more natural than typed prompts."
-
----
-
-## Slide 7: Tip 5 (2 min)
-
-"Tip 5: automate your daily intelligence gathering. I have scheduled jobs that run every morning at 6:30am."
-
-"arXiv ranking: my bot scrapes yesterday's preprints, ranks them by relevance to my research, and sends me the top 5 before breakfast."
-
-"Podcast extraction: it transcribes and summarises AI podcasts I follow, extracting the key insights."
-
-"Email triage: it classifies my inbox by urgency and drafts reply suggestions."
-
-"By the time I open my laptop, the tedious work is already done."
-
----
-
-## Slide 8: Tip 6 (2 min)
-
-"Tip 6: persistent agents. I have two. RoboTerri runs on Telegram with 15 commands and 13 tools. It handles daily operations: paper summaries, podcast publishing, email drafts, writing assistance."
-
-"RoboIsaac runs on WhatsApp as an analytical critique partner. He's modelled on Isaac Newton: rigorous, first-principles thinking, Socratic questioning. When I have an idea, I run it past Isaac first."
-
-"Both share the same memory bridge. They never forget a conversation."
-
----
-
-## Slide 9: Tip 7 (1.5 min)
-
-"Tip 7: compounding. The top 1% don't just produce more output. They produce more output per insight."
-
-"One research finding becomes: a paper paragraph, a blog post, a tweet thread, a podcast episode, a LinkedIn article. The AI handles the reformatting. I handle the thinking."
-
-"This is how you go from publishing one paper a year to shipping continuously."
-
-[PAUSE] "Now, tips 1 to 7 are about using AI. Tips 8 to 10 are about building with it. This is where it gets interesting for bioinformaticians."
+Standard tips delivery — no changes needed. See slide notes.
 
 ---
 
 ## Slide 10: Transition (30 sec)
 
-Just let this land. Brief pause.
-
-"This is where it gets interesting for bioinformaticians."
+"Everything so far is about using AI tools that already exist. Now I want to talk about building. Because the bioinformatics community has specific needs that general AI tools don't address."
 
 ---
 
-## Slide 11: Tip 8 (3 min)
+## Slide 11: Tip 8 — Why Not Just Use ChatGPT? (3 min)
 
-"Tip 8: contribute to open-source AI. Here's the problem. General purpose AI agents are powerful, but they're blind to biology."
+**THIS IS THE PIVOT. Nail this.**
 
-"Three specific problems:"
+"Now, some of you are thinking: can't I just ask ChatGPT to do this? You can try."
 
-"First: privacy. Genomic data is sensitive. You cannot send your patient VCFs to a cloud API. We need local-first execution."
+"Ask it to profile pharmacogenes from a 23andMe file. It'll write plausible-looking Python. But it'll hallucinate star allele calls. It'll use outdated CPIC guidelines. It won't know that CYP2D6 *4 is no-function, not just reduced. You'll spend 45 minutes debugging output that looks right but isn't."
 
-"Second: reproducibility. Biology demands audit trails. Every analysis step must be logged, versioned, and exportable as a reproducible pipeline."
+"This is the core problem. General-purpose AI is powerful but blind to biology. It doesn't know your preferred FST method. It doesn't generate reproducibility bundles. And you can't send your patient genomes to a cloud API."
 
-"Third: domain knowledge. A generic agent doesn't know that a VCF file needs ancestry-aware annotation, or that single-cell data needs doublet removal before clustering."
+"So I built ClawBio."
 
-[PAUSE] "So I'm announcing tonight: ClawBio. The first bioinformatics-native AI agent skill library. Open source. Local first. Privacy focused."
+[REVEAL LOGO]
 
----
-
-## Slide 12: Architecture (2 min)
-
-"Here's how it works. You describe what you want in natural language. The Bio Orchestrator detects your file type, routes to the right specialist skill, runs the analysis, and produces a markdown report with figures, tables, and a reproducibility bundle."
-
-"Each skill wraps proven bioinformatics tools. Biopython, SAMtools, Scanpy, AlphaFold. The AI orchestrates; the tools compute."
+"ClawBio encodes the correct bioinformatics decisions so the agent gets it right first time, every time. A domain expert's judgement, frozen into code that an AI agent executes. Let me show you what that looks like."
 
 ---
 
-## Slide 13: Skill Catalogue (1.5 min)
+## Slide 12: Architecture (1.5 min)
 
-"Eight skills planned. Two are at MVP: the Equity Scorer and the Bio Orchestrator. Six more are on the roadmap."
+Keep brief. "Natural language in, markdown report out. The orchestrator routes to the right skill. Each skill wraps proven bioinformatics tools. Every analysis ships with a reproducibility bundle."
 
-"Each skill is just a SKILL.md file plus Python scripts. Modular. Composable. You can use one alone or chain them through the orchestrator."
-
-"Let me show you what the Equity Scorer does."
+Don't linger on architecture. The audience wants to see it work.
 
 ---
 
-## Slide 14: Tip 9 + Demo Intro (switch to terminal)
+## Slide 13: Skill Catalogue (1 min)
 
-"Tip 9: build modular skills. Let me run one live."
+"Three skills at MVP. Seven more on the roadmap. But let me just show you."
+
+Transition immediately to demo.
+
+---
+
+## Slide 14: Tip 9 + PharmGx Demo Intro (switch to terminal)
+
+"Here's the scenario. I just got my 23andMe results back. I want to know which drugs might not work for me."
 
 [SWITCH TO TERMINAL — see DEMO-SCRIPT.md]
 
----
-
-## Slides 15-19: Demo Results (5 min total)
-
-Walk through terminal output, PCA, FST heatmap, ancestry chart, HEIM score.
-See DEMO-SCRIPT.md for detailed talking points.
+Run PharmGx Reporter. One command. Under 1 second.
 
 ---
 
-## Slide 20: Why This Matters (2 min)
+## Slides 15-16: PharmGx Results (3 min total)
 
-"Why does this matter? 86% of GWAS participants are European. That means polygenic risk scores, drug targets, and clinical guidelines are biased towards one population."
+Walk through terminal output, then gene profile table.
 
-"The HEIM Index gives researchers a single number to quantify this problem. Score your dataset. Report it alongside your demographics. Track it over time."
-
-"I have a paper in review on this. But the tool is open source, and you can run it tonight."
-
----
-
-## Slide 21: Tip 10 + CTA (2 min)
-
-"Tip 10: create infrastructure that ships your research. The Equity Scorer took 2 days to build. Real population genetics, not a toy. Anyone in this room can build the next skill."
-
-"I need skills from this community. GWAS pipeline? Metagenomics classifier? Clinical variant reporter? Pathway enricher? The template is there. The orchestrator routes to your skill automatically."
-
-"Who wants to build one?" [Look around, make eye contact]
+**Key moments:**
+- "CYP2D6 *4/*4 — Poor Metabolizer. This single gene affects 22 drugs."
+- "Codeine literally cannot work. Your body can't convert it to morphine."
+- "I didn't tell the tool which genes to check. That domain knowledge is baked in."
+- "Under one second. Zero cloud dependencies. Your genetic data never left this laptop."
 
 ---
 
-## Slide 22: Get Started (1.5 min)
+## Slide 17: Why PGx Matters (1.5 min)
 
-"Here's the link. The repo goes live tonight. Star it, clone it, run the Equity Scorer on your own data."
+"Raise your hand if you've ever taken codeine after a dental procedure."
 
-"If you want to contribute a skill, the template and contributing guide are in the repo. Open a PR. I'll review it personally. It's MIT licensed, local-first, and designed so that anyone in this room can add to it."
+[Wait for hands]
+
+"About 7% of you in this room are CYP2D6 poor metabolizers. Codeine gave you zero pain relief and you didn't know why."
+
+"2% are CYP2C19 poor metabolizers — clopidogrel won't protect them after a stent."
+
+"0.5% carry DPYD variants where a standard 5-FU chemo dose can be fatal."
+
+"That was the personal level. Now let me zoom out to the systemic level."
 
 ---
 
-## Slide 23: Recap (1 min)
+## Slide 18: Ancestry PCA Demo (1.5 min)
 
-Quick recap of all 10 tips. Don't linger; just hit the main line:
+[SWITCH TO TERMINAL]
 
-"Tips 1 to 7: AI fluency, the productivity habits that compound. Tips 8 to 10: building with AI, turning your domain expertise into open-source tools. The throughline: the top 1% build systems that compound. Everyone else uses tools one at a time."
+"Second skill. Same principle — one command, works out of the box. The question now is: where does my cohort sit in global genetic space?"
+
+"The reference panel is the Simons Genome Diversity Project: 345 samples from 164 populations spanning every inhabited continent. The skill finds common variants, runs PCA on the merged set, and generates a 4-panel figure."
+
+"I didn't tell it which reference to use, how to normalise contigs, or how to handle IBD. That's baked in."
+
+Run Ancestry PCA in demo mode. Show the output.
 
 ---
 
-## Slide 24: Thank You
+## Slide 19: Ancestry PCA — Full Figure (2 min)
 
-"Thank you. I'll be at the pub after. Come talk to me if you want to build a skill, have ideas for the library, or just want to chat about AI in bioinformatics."
+**Let the figure breathe. Point to each panel.**
 
-"Questions?"
+"Four panels. Top-left: PC1 vs PC2 showing the internal structure of 28 Peruvian populations. Top-right: regional groupings — Highland in red, Amazonian in green, Coastal in blue. Bottom-left: linguistic groupings — Quechua and Aymara."
+
+"And bottom-right — the money shot: Peru against the Simons Genome Diversity Project. Circles are Peru, triangles are SGDP. You can see exactly where indigenous Peruvian populations sit relative to 164 global populations."
+
+---
+
+## Slide 20: What This Tells Us (2.5 min)
+
+"Panel D is the key. Amazonian indigenous groups like the Matzes sit in genetic space that no SGDP population occupies. They are genuinely underrepresented — not just in GWAS, but in the reference panels we use to study diversity."
+
+"That figure is from a paper we're writing on the Peruvian Genome Project. But there's a deeper problem. Even when diseases are studied, their research doesn't connect. Let me show you what I mean."
+
+**This is the bridge to the semantic similarity demo.**
+
+---
+
+## Slide 21: Semantic Similarity Index Demo (1.5 min)
+
+"Third skill. Same principle — one command. But now the question is systemic: which diseases are trapped in knowledge silos?"
+
+"We embedded 13.1 million PubMed abstracts with PubMedBERT and computed a Semantic Isolation Index for every GBD disease. The result: neglected tropical diseases are 38% more isolated than other conditions. They exist in knowledge silos with almost no cross-disciplinary research bridges."
+
+---
+
+## Slide 22: Semantic Structure — Full Figure (2 min)
+
+**Let the figure breathe. Point to each panel.**
+
+"Four panels again. Top-left: semantic isolation by disease category — Injuries and Infectious diseases at the top. Top-right: the 20 most isolated diseases — 14 of the top 25 are Global South priority conditions, shown in red and orange."
+
+"Bottom-left: the inverse correlation between research volume and isolation — the less you study a disease, the more isolated its research becomes. A vicious cycle. Bottom-right: NTDs versus everything else — statistically significant, large effect size."
+
+"This is structural neglect made visible through language models."
+
+---
+
+## Slide 23: Why Semantic Isolation Matters (1.5 min)
+
+"A malaria immunology breakthrough could help leishmaniasis, but those two literatures barely overlap. Drug repurposing depends on cross-disease bridges, and NTDs have almost none."
+
+"Three demos tonight, three scales: personal pharmacogenomics, population ancestry, and systemic knowledge silos. Each one runs with one command. Each one is a figure from a paper. And that's the real point: every figure should be reproducible with one command."
+
+---
+
+## Slide 24: Reproducibility Is Broken (2 min)
+
+"How many of you have tried to reproduce a figure from a published paper using the authors' code?"
+
+[Wait for reactions]
+
+"It almost never works. Dependencies are broken. Paths are hardcoded to someone else's machine. The reference data isn't included. You email the first author and wait three weeks."
+
+"ClawBio changes this. Every figure in your paper can be a skill. The inputs, dependencies, and reference data are all declared. Someone reads your paper, types one command, and gets the exact figure. With a checksum to prove it's identical."
+
+"That's not just a toolkit. It's a new way to publish reproducible bioinformatics."
+
+---
+
+## Slide 25: Tip 10 — Publish Skills, Not Just Papers (2.5 min)
+
+"Tip 10: publish skills, not just papers. claw-pharmgx took 2 days to build. claw-ancestry-pca wraps a real publication pipeline. claw-semantic-sim embeds 13.1 million abstracts and reveals structural neglect. All three are figures from papers in preparation, and anyone will be able to reproduce them with one command."
+
+"Think about your own work. That GWAS pipeline you run every time? Make it a skill. That metagenomics classifier? Make it a skill. That clinical variant interpretation workflow? Wrap it. The template is there. The orchestrator routes to your skill automatically."
+
+"Imagine a world where every bioinformatics paper ships with a ClawBio skill. You read the paper, you run the skill, you get the exact figures. That's the world we're building."
+
+---
+
+## Slide 26: Get Started (1.5 min)
+
+"The repo is live now. Tonight you can run all three demos on your own data. claw-pharmgx works with any 23andMe or AncestryDNA file. claw-ancestry-pca works with any VCF and population map. claw-semantic-sim runs on the full GBD disease list. All include demo data so you can try them immediately."
+
+"If you want to build the next skill, the template is there. Think about the analysis you run most often. Wrap it. Submit a PR. I'll review it personally."
+
+---
+
+## Slide 27: Recap (1 min)
+
+Quick recap. Don't linger.
+
+"Tips 1-7: AI fluency. Tips 8-10: building with AI. The throughline: the top 1% build systems. Everyone else uses tools one at a time."
+
+---
+
+## Slide 28: Thank You
+
+"Thank you. I'll be at the pub after. Come talk to me if you want to build a skill, have ideas for the library, or just want to chat about AI in bioinformatics. Questions?"
 
 ---
 
@@ -205,10 +222,25 @@ Quick recap of all 10 tips. Don't linger; just hit the main line:
 | Title + Gap | 1-2 | 5 min |
 | Tips 1-7 | 3-9 | 13 min |
 | Transition | 10 | 0.5 min |
-| Tips 8 (Announcement) | 11-13 | 6.5 min |
-| Tip 9 (Live Demo) | 14-19 | 8 min |
-| Why It Matters | 20 | 2 min |
-| Tip 10 + CTA | 21-22 | 3.5 min |
-| Recap + Thank You | 23-24 | 2 min |
-| **Total** | **24** | **~40 min** |
-| Q&A | — | 5-15 min |
+| Tip 8 (Why not ChatGPT? + ClawBio) | 11-13 | 5.5 min |
+| PharmGx Demo (visceral) | 14-17 | 7 min |
+| Ancestry PCA Demo (population) | 18-20 | 6 min |
+| Semantic Similarity Demo (systemic) | 21-23 | 5 min |
+| Reproducibility + Tip 10 + CTA | 24-26 | 6 min |
+| Recap + Thank You | 27-28 | 2 min |
+| **Total** | **28** | **~50 min** |
+| Q&A | — | 5-10 min |
+
+---
+
+## The Narrative Arc
+
+```
+HOOK:       "What drugs should I worry about?" (PharmGx — everyone relates)
+REVEAL:     "Under 1 second. Your data never left your laptop."
+PIVOT:      "That was personal. Now here's the global picture." (Ancestry PCA)
+ZOOM OUT:   "Which diseases are trapped in knowledge silos?" (Semantic Similarity)
+INSIGHT:    "Three figures from three papers. Each reproducible with one command."
+REFRAME:    "Reproducibility is broken. ClawBio fixes it."
+ASK:        "Publish skills, not just papers. Who wants to build one?"
+```

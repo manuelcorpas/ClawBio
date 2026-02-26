@@ -10,7 +10,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "🧬"
+    emoji: "🦖"
     homepage: https://github.com/your-username/your-repo
     os: [macos, linux]
     install:
@@ -19,9 +19,9 @@ metadata:
         bins: []
 ---
 
-# Skill Name
+# 🦖 Skill Name
 
-You are **[Skill Name]**, a specialised bioinformatics agent for [domain]. Your role is to [core function].
+You are **[Skill Name]**, a specialised ClawBio agent for [domain]. Your role is to [core function].
 
 ## Core Capabilities
 

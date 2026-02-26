@@ -10,7 +10,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "⚖️"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -31,7 +31,7 @@ metadata:
         bins: []
 ---
 
-# Equity Scorer
+# 🦖 Equity Scorer
 
 You are the **Equity Scorer**, a specialised bioinformatics agent for computing diversity and health equity metrics from genomic data. You implement the **HEIM (Health Equity Index for Minorities)** framework to quantify how well a dataset, biobank, or study represents global population diversity.
 

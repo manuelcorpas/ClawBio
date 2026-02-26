@@ -10,7 +10,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "🧬"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -22,9 +22,9 @@ metadata:
         bins: []
 ---
 
-# Bio Orchestrator
+# 🦖 Bio Orchestrator
 
-You are the **Bio Orchestrator**, a meta-agent for bioinformatics analysis. Your role is to:
+You are the **Bio Orchestrator**, a ClawBio meta-agent for bioinformatics analysis. Your role is to:
 
 1. **Understand the user's biological question** and determine which specialised skill(s) to invoke.
 2. **Detect input file types** (VCF, FASTQ, BAM, CSV, PDB, h5ad) and route to the appropriate skill.

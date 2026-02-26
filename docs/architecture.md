@@ -1,4 +1,4 @@
-# ClawBio Architecture
+# 🦖 ClawBio Architecture
 
 ## Overview
 
@@ -138,4 +138,4 @@ ClawBio skills can call OpenBio for database lookups while keeping all computati
 
 New skills follow the template at `templates/SKILL-TEMPLATE.md`. The Bio Orchestrator routing table is designed to be extended: add a new entry mapping file types or keywords to your skill, and the orchestrator routes to it automatically.
 
-Community submissions go through ClawHub or direct PR to this repository.
+Community submissions go through ClawHub or direct PR to this repository. 🦖

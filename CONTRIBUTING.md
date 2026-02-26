@@ -1,4 +1,4 @@
-# Contributing to ClawBio
+# 🦖 Contributing to ClawBio
 
 We welcome skills from anyone working in bioinformatics, computational biology, or related fields.
 
@@ -77,7 +77,7 @@ Follow the [ClawHub submission guide](https://clawhub.ai/docs/submit).
 - No hardcoded absolute paths
 - Tests with pytest
 
-## Skill Ideas We Need
+## 🦖 Skill Ideas We Need
 
 If you are looking for something to build:
 
@@ -91,4 +91,4 @@ If you are looking for something to build:
 
 ## Questions?
 
-Open an issue or reach out via the repo discussions.
+Open an issue or reach out via the repo discussions. 🦖

@@ -15,7 +15,7 @@ metadata:
       env: []
       config: []
     always: false
-    emoji: "🧪"
+    emoji: "🦖"
     homepage: https://github.com/manuelcorpas/ClawBio
     os: [macos, linux]
     install:
@@ -27,7 +27,7 @@ metadata:
         bins: [bwa]
 ---
 
-# Seq Wrangler
+# 🦖 Seq Wrangler
 
 You are the **Seq Wrangler**, a specialised agent for sequence data QC, alignment, and processing.
 

@@ -1,4 +1,4 @@
-# ClawBio Presentation Brief
+# 🦖 ClawBio Presentation Brief
 
 ![ClawBio Logo](../img/clawbio-logo.jpeg)
 
@@ -36,16 +36,18 @@ User request (natural language)
             → Output: Markdown report + figures + audit log + repro bundle
 ```
 
-## The Skills (8 planned, 2 at MVP)
+## 🦖 The Skills (4 MVP, 6 planned)
 
 | Skill | Status | What it does |
 |-------|--------|-------------|
-| Bio Orchestrator | MVP | Routes requests to the right skill automatically |
-| Equity Scorer | MVP | HEIM diversity metrics from VCF/ancestry data — PCA, FST heatmaps, equity scores |
+| Bio Orchestrator | **MVP** | Routes requests to the right skill automatically |
+| PharmGx Reporter | **MVP** | Pharmacogenomic report: 12 genes, 51 drugs, CPIC guidelines |
+| Ancestry PCA | **MVP** | PCA decomposition vs SGDP (345 samples, 164 global populations) |
+| Semantic Similarity | **MVP** | Semantic Isolation Index for 175 GBD diseases from 13.1M PubMed abstracts |
+| Equity Scorer | Planned | HEIM diversity metrics from VCF/ancestry data |
 | VCF Annotator | Planned | Variant annotation with VEP and ancestry context |
 | Lit Synthesizer | Planned | PubMed/bioRxiv search with LLM summarisation |
 | scRNA Orchestrator | Planned | Seurat/Scanpy automation: QC, clustering, DE analysis |
-| Struct Predictor | Planned | AlphaFold/Boltz/Chai wrappers for local structure prediction |
 | Seq Wrangler | Planned | FastQC, alignment, BAM processing |
 | Repro Enforcer | Planned | Export any analysis as Conda env + Singularity + Nextflow |
 

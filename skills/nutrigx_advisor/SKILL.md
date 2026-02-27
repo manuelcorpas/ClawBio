@@ -3,7 +3,7 @@
 **Skill ID**: `nutrigx-advisor`  
 **Version**: 0.1.0  
 **Status**: MVP  
-**Author**: ClawBio Community  
+**Author**: David de Lorenzo (ClawBio Community) 
 **Requires**: Python 3.11+, pandas, numpy, matplotlib, seaborn, reportlab (optional)
 
 ---
@@ -267,19 +267,7 @@ Key literature underpinning the SNP panel and scoring algorithm:
 
 ## Contributing
 
-To extend the SNP panel, edit `data/snp_panel.json` following the schema:
-
-```json
-{
-  "rsid": "rs1801133",
-  "gene": "MTHFR",
-  "risk_allele": "T",
-  "nutrient_domain": "folate",
-  "weight": 0.85,
-  "effect_direction": "decreased_conversion",
-  "pmid": "9042914",
-  "notes": "C677T variant; TT genotype reduces MTHFR activity ~70%"
-}
-```
-
-Submit a PR with updated panel entries and a corresponding test in `tests/`.
+The SNP panel (`data/snp_panel.json`) is maintained by the skill author.
+To suggest additions or corrections, contact David de Lorenzo directly via
+GitHub ([@drdaviddelorenzo](https://github.com/drdaviddelorenzo)) or open
+an issue tagging him in the main ClawBio repository.

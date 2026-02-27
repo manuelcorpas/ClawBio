@@ -33,7 +33,7 @@ The Bio Orchestrator should route to this skill when the user says anything like
 - "nutrient metabolism", "vitamin absorption genetics"
 - "MTHFR", "APOE", "FTO", "BCMO1", "VDR", "FADS1/2"
 - "folate", "omega-3", "vitamin D", "caffeine metabolism", "lactose", "gluten"
-- Input files: `.txt` (23andMe), `.csv` (AncestryDNA), `.vcf`
+- Input files: `.txt` or `.csv` (23andMe), `.csv` (AncestryDNA), `.vcf`
 
 ---
 
@@ -107,7 +107,7 @@ The Bio Orchestrator should route to this skill when the user says anything like
 ### 1. Input Parsing (`parse_input.py`)
 
 Accepts:
-- 23andMe `.txt` (tab-separated: rsid, chromosome, position, genotype)
+- 23andMe `.txt` or `.csv` (tab-separated: rsid, chromosome, position, genotype)
 - AncestryDNA `.csv`
 - Standard VCF (extracts GT field)
 
@@ -154,11 +154,11 @@ Outputs a structured Markdown report with:
 
 ### 5. Reproducibility Bundle (`repro_bundle.py`)
 
-Exports:
+Exports to the output directory (not committed to the repo):
 - `commands.sh` — full CLI to reproduce analysis
 - `environment.yml` — pinned conda environment
-- SHA-256 checksums of input and output files
-- Timestamp and ClawBio version tag
+- `checksums.txt` — SHA-256 checksums of input and output files
+- `provenance.json` — timestamp and ClawBio version tag
 
 ---
 
@@ -166,13 +166,16 @@ Exports:
 
 ```bash
 # From 23andMe raw data
-openclaw "Generate my personalised nutrition report from genome.txt"
+openclaw "Generate my personalised nutrition report from genome.csv"
 
 # From VCF
 openclaw "Run NutriGx analysis on variants.vcf and flag any folate pathway risks"
 
 # Targeted query
 openclaw "What does my APOE status mean for my saturated fat intake?"
+
+# Generate a random demo patient and run the report
+python examples/generate_patient.py --run
 ```
 
 ---
@@ -181,24 +184,31 @@ openclaw "What does my APOE status mean for my saturated fat intake?"
 
 ```
 skills/nutrigx-advisor/
-├── SKILL.md                  ← this file (agent instructions)
-├── nutrigx_advisor.py        ← main entry point
-├── parse_input.py            ← multi-format parser
-├── extract_genotypes.py      ← SNP lookup engine
-├── score_variants.py         ← risk scoring algorithm
-├── generate_report.py        ← Markdown + figures
-├── repro_bundle.py           ← reproducibility export
+├── SKILL.md                      ← this file (agent instructions)
+├── nutrigx_advisor.py            ← main entry point
+├── parse_input.py                ← multi-format parser
+├── extract_genotypes.py          ← SNP lookup engine
+├── score_variants.py             ← risk scoring algorithm
+├── generate_report.py            ← Markdown + figures
+├── repro_bundle.py               ← reproducibility export
+├── .gitignore
 ├── data/
-│   ├── snp_panel.json        ← curated SNP definitions
-│   ├── strand_flip.json      ← forward-strand normalisation table
-│   └── nutrient_weights.json ← evidence-based scoring weights
+│   └── snp_panel.json            ← curated SNP definitions
 ├── tests/
-│   ├── synthetic_patient.txt ← 23andMe-format synthetic test data
-│   └── test_nutrigx.py       ← pytest suite
+│   ├── synthetic_patient.csv     ← fixed 23andMe-format test data (for pytest)
+│   └── test_nutrigx.py           ← pytest suite
 └── examples/
-    ├── example_report.md     ← demo output (synthetic data)
-    └── example_radar.png     ← demo radar chart
+    ├── generate_patient.py       ← random patient generator (demo use)
+    ├── data/                     ← generated patient files land here (gitignored)
+    └── output/
+        ├── nutrigx_report.md     ← pre-rendered demo report
+        ├── nutrigx_radar.png     ← demo radar chart (nutrient risk profile)
+        └── nutrigx_heatmap.png   ← demo gene × nutrient heatmap
 ```
+
+> **Note**: Runtime output directories and randomly generated patient files are
+> excluded from version control via `.gitignore`. Only the pre-rendered demo
+> report in `examples/output/` is committed.
 
 ---
 

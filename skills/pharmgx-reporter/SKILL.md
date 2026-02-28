@@ -9,6 +9,7 @@ tags:
   - CPIC
   - DTC-genetics
   - precision-medicine
+  - ClinPGx
 inputs:
   - name: input
     type: file
@@ -38,6 +39,7 @@ Generate a pharmacogenomic report from consumer genetic data (23andMe, AncestryD
 3. Calls star alleles and determines metabolizer phenotypes
 4. Looks up CPIC drug recommendations for 51 medications
 5. Generates a markdown report with gene profiles, drug tables, and alerts
+6. Builds a clickable ClinPGx URL pre-filled with the patient's genotypes for browsing CPIC, DPWG, and FDA recommendations
 
 ## Genes covered
 

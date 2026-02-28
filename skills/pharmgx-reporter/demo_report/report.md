@@ -1,6 +1,6 @@
 # ClawBio PharmGx Report
 
-**Date**: 2026-02-25 19:09 UTC
+**Date**: 2026-02-28 20:05 UTC
 **Input**: `demo_patient.txt`
 **Format detected**: 23andme
 **Checksum (SHA-256)**: `4c2e9c8a7fd58de831187dd847e30509fe72c5aee09ff80d617caa4ae8a0eedb`
@@ -75,6 +75,31 @@
 | CYP2B6 | Cytochrome P450 2B6 | *1/*1 | Normal Metabolizer |
 | NUDT15 | Nudix Hydrolase 15 | *1/*1 | Normal Metabolizer |
 | CYP1A2 | Cytochrome P450 1A2 | *1/*1F | Normal Metabolizer |
+
+## Interactive ClinPGx Link
+
+**Explore this patient's pharmacogenomic profile** with CPIC, DPWG, and FDA guideline annotations:
+
+[Open in ClinPGx](https://www.clinpgx.org/genotypeResults?q=%7B%22CYP2C19%22%3A%20%5B%22%2A1%22%2C%20%22%2A2%22%2C%20null%5D%2C%20%22CYP2D6%22%3A%20%5B%22%2A4%22%2C%20%22%2A4%22%2C%20null%5D%2C%20%22CYP2C9%22%3A%20%5B%22%2A1%22%2C%20%22%2A3%22%2C%20null%5D%2C%20%22DPYD%22%3A%20%5B%22Normal%22%2C%20%22Normal%22%2C%20null%5D%2C%20%22TPMT%22%3A%20%5B%22%2A1%22%2C%20%22%2A1%22%2C%20null%5D%2C%20%22UGT1A1%22%3A%20%5B%22%2A1%22%2C%20%22%2A1%22%2C%20null%5D%2C%20%22CYP3A5%22%3A%20%5B%22%2A3%22%2C%20%22%2A3%22%2C%20null%5D%2C%20%22CYP2B6%22%3A%20%5B%22%2A1%22%2C%20%22%2A1%22%2C%20null%5D%2C%20%22NUDT15%22%3A%20%5B%22%2A1%22%2C%20%22%2A1%22%2C%20null%5D%2C%20%22CYP1A2%22%3A%20%5B%22%2A1%22%2C%20%22%2A1F%22%2C%20null%5D%7D)
+
+This link pre-fills ClinPGx with the patient's genotypes. No data is uploaded; the genotypes are encoded in the URL itself.
+
+### CPIC Gene References
+
+| Gene | Diplotype | Phenotype | CPIC Guideline |
+|------|-----------|-----------|----------------|
+| CYP2C19 | *1/*2 | Intermediate Metabolizer | [CYP2C19 on CPIC](https://cpicpgx.org/gene/cyp2c19/) |
+| CYP2D6 | *4/*4 | Poor Metabolizer | [CYP2D6 on CPIC](https://cpicpgx.org/gene/cyp2d6/) |
+| CYP2C9 | *1/*3 | Intermediate Metabolizer | [CYP2C9 on CPIC](https://cpicpgx.org/gene/cyp2c9/) |
+| VKORC1 | GA | Intermediate Warfarin Sensitivity | [VKORC1 on CPIC](https://cpicpgx.org/gene/vkorc1/) |
+| SLCO1B1 | TC | Intermediate Function | [SLCO1B1 on CPIC](https://cpicpgx.org/gene/slco1b1/) |
+| DPYD | Normal/Normal | Normal Metabolizer | [DPYD on CPIC](https://cpicpgx.org/gene/dpyd/) |
+| TPMT | *1/*1 | Normal Metabolizer | [TPMT on CPIC](https://cpicpgx.org/gene/tpmt/) |
+| UGT1A1 | *1/*1 | Normal Metabolizer | [UGT1A1 on CPIC](https://cpicpgx.org/gene/ugt1a1/) |
+| CYP3A5 | *3/*3 | CYP3A5 Non-expressor | [CYP3A5 on CPIC](https://cpicpgx.org/gene/cyp3a5/) |
+| CYP2B6 | *1/*1 | Normal Metabolizer | [CYP2B6 on CPIC](https://cpicpgx.org/gene/cyp2b6/) |
+| NUDT15 | *1/*1 | Normal Metabolizer | [NUDT15 on CPIC](https://cpicpgx.org/gene/nudt15/) |
+| CYP1A2 | *1/*1F | Normal Metabolizer | [CYP1A2 on CPIC](https://cpicpgx.org/gene/cyp1a2/) |
 
 ## Detected Variants
 
@@ -199,3 +224,4 @@ python pharmgx_reporter.py --input demo_patient.txt --output report
 - CPIC. Clinical Pharmacogenetics Implementation Consortium. https://cpicpgx.org/
 - Caudle, K.E. et al. (2014). Standardizing terms for clinical pharmacogenetic test results. Genet Med, 16(9), 655-663.
 - PharmGKB. https://www.pharmgkb.org/
+- ClinPGx. Clinical Pharmacogenomics. https://www.clinpgx.org/

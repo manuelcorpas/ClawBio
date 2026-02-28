@@ -12,11 +12,13 @@ Usage:
 
 import argparse
 import hashlib
+import json
 import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 # ---------------------------------------------------------------------------
 # 1. PGx SNP definitions (ported from PharmXD snp-parser.js)
@@ -724,6 +726,60 @@ GUIDELINES = {
 
 
 # ---------------------------------------------------------------------------
+# 3b. ClinPGx URL builder
+# ---------------------------------------------------------------------------
+
+def build_clinpgx_url(profiles):
+    """Build a ClinPGx URL pre-filled with the patient's genotypes.
+
+    ClinPGx (https://www.clinpgx.org) accepts a JSON payload as the 'q'
+    query parameter.  The payload maps each gene to a three-element list:
+    [allele1, allele2, null].  The JSON is URL-encoded and appended to
+    https://www.clinpgx.org/genotypeResults?q={encoded}.
+
+    Parameters
+    ----------
+    profiles : dict
+        Gene -> {"diplotype": str, "phenotype": str}.  Diplotypes that
+        contain a "/" separator (e.g. "*1/*2") are split into two alleles.
+        Genes without a diplotype or without "/" are skipped.
+
+    Returns
+    -------
+    str
+        Full ClinPGx URL with encoded genotype payload.
+    """
+    payload = {}
+    for gene, info in profiles.items():
+        dip = info.get("diplotype", "")
+        if not dip or "/" not in dip:
+            continue
+        parts = dip.split("/")
+        if len(parts) != 2:
+            continue
+        payload[gene] = [parts[0], parts[1], None]
+
+    encoded = quote(json.dumps(payload), safe="")
+    return "https://www.clinpgx.org/genotypeResults?q=" + encoded
+
+
+def build_cpic_gene_url(gene):
+    """Return the CPIC guideline page URL for a given gene.
+
+    Parameters
+    ----------
+    gene : str
+        Gene symbol (e.g. "CYP2D6").
+
+    Returns
+    -------
+    str
+        URL to the CPIC gene page.
+    """
+    return "https://cpicpgx.org/gene/" + gene.lower() + "/"
+
+
+# ---------------------------------------------------------------------------
 # 4. File parser
 # ---------------------------------------------------------------------------
 
@@ -989,6 +1045,30 @@ def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_result
             lines.append(f"| {gene} | {GENE_DEFS[gene]['name']} | {p['diplotype']} | {p['phenotype']} |")
     lines.append("")
 
+    # Interactive ClinPGx Link
+    clinpgx_url = build_clinpgx_url(profiles)
+    lines.append("## Interactive ClinPGx Link")
+    lines.append("")
+    lines.append("**Explore this patient's pharmacogenomic profile** with CPIC, DPWG, "
+                 "and FDA guideline annotations:")
+    lines.append("")
+    lines.append(f"[Open in ClinPGx]({clinpgx_url})")
+    lines.append("")
+    lines.append("This link pre-fills ClinPGx with the patient's genotypes. "
+                 "No data is uploaded; the genotypes are encoded in the URL itself.")
+    lines.append("")
+    lines.append("### CPIC Gene References")
+    lines.append("")
+    lines.append("| Gene | Diplotype | Phenotype | CPIC Guideline |")
+    lines.append("|------|-----------|-----------|----------------|")
+    for gene in GENE_DEFS:
+        if gene in profiles:
+            p = profiles[gene]
+            cpic_url = build_cpic_gene_url(gene)
+            lines.append(f"| {gene} | {p['diplotype']} | {p['phenotype']} "
+                         f"| [{gene} on CPIC]({cpic_url}) |")
+    lines.append("")
+
     # Detected variants
     lines.append("## Detected Variants")
     lines.append("")
@@ -1052,6 +1132,7 @@ def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_result
     lines.append("- CPIC. Clinical Pharmacogenetics Implementation Consortium. https://cpicpgx.org/")
     lines.append("- Caudle, K.E. et al. (2014). Standardizing terms for clinical pharmacogenetic test results. Genet Med, 16(9), 655-663.")
     lines.append("- PharmGKB. https://www.pharmgkb.org/")
+    lines.append("- ClinPGx. Clinical Pharmacogenomics. https://www.clinpgx.org/")
     lines.append("")
 
     return "\n".join(lines)

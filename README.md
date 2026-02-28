@@ -18,6 +18,10 @@
   <a href="https://clawbio.github.io/ClawBio/slides/"><img src="https://img.shields.io/badge/slides-London_Bioinformatics_Meetup-purple" alt="Slides"></a>
 </p>
 
+<p align="center">
+  <img src="img/demo.gif" alt="ClawBio PharmGx Demo" width="700">
+</p>
+
 ---
 
 ## The Problem

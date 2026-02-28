@@ -18,8 +18,27 @@
   <a href="https://clawbio.github.io/ClawBio/slides/"><img src="https://img.shields.io/badge/slides-London_Bioinformatics_Meetup-purple" alt="Slides"></a>
 </p>
 
+---
+
+## See It in Action
+
+A community contributor built a nutrigenomics skill and ran it — from raw genetic data to personalised nutrition report with radar charts, heatmaps, and reproducibility bundle:
+
+https://github.com/ClawBio/ClawBio/releases/download/v0.2.0/david-nutrigx-demo.mp4
+
+<details>
+<summary><strong>What just happened behind the scenes</strong></summary>
+
+1. The AI agent read `SKILL.md` — a specification that encodes the correct bioinformatics decisions (40 SNPs, 13 nutrient domains, evidence-based risk thresholds)
+2. It ran the Python skill **locally** — no genetic data left the machine
+3. It produced a markdown report with figures, tables, and a **reproducibility bundle** (`commands.sh`, `environment.yml`, `checksums.sha256`)
+4. Anyone can re-run the exact same analysis and get identical results, SHA-256 verified
+
+</details>
+
 <p align="center">
   <img src="img/demo.gif" alt="ClawBio PharmGx Demo" width="700">
+  <br><em>PharmGx Reporter: 12 genes, 51 drugs, under 1 second</em>
 </p>
 
 ---
@@ -71,6 +90,24 @@ Ask Claude to "profile my pharmacogenes from this 23andMe file." It'll write pla
 - No reproducibility bundle. No audit log. No checksums.
 
 ClawBio encodes the correct bioinformatics decisions so the agent gets it right first time, every time.
+
+---
+
+## 🔍 Provenance & Reproducibility
+
+Every ClawBio analysis ships with a **reproducibility bundle** — not as an afterthought, but as part of the output:
+
+```
+report/
+├── report.md              # Full analysis with figures and tables
+├── figures/               # Publication-quality PNGs
+├── tables/                # CSV data tables
+├── commands.sh            # Exact commands to reproduce
+├── environment.yml        # Conda environment snapshot
+└── checksums.sha256       # SHA-256 of every input and output file
+```
+
+**Why this matters**: a reviewer can re-run your analysis in 30 seconds. A collaborator can reproduce your Figure 3 without emailing you. Future-you can regenerate results two years later from the same bundle.
 
 ---
 
@@ -223,7 +260,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the submission process and [templates
 
 ClawBio was announced at the **London Bioinformatics Meetup** on 26 February 2026.
 
-- **Slides**: [manuelcorpas.github.io/ClawBio/slides/](https://manuelcorpas.github.io/ClawBio/slides/)
+- **Slides**: [clawbio.github.io/ClawBio/slides/](https://clawbio.github.io/ClawBio/slides/)
 - **Talk**: *10 Tips for Becoming a Top 1% AI User* — with live demos of all three MVP skills
 
 ---

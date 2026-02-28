@@ -15,7 +15,13 @@ def snp_raw_score(risk_count: int) -> float:
     """
     if risk_count is None:
         return None
-    return {0: 0.0, 1: 0.5, 2: 1.0}.get(risk_count, 0.0)
+    dosage_map = {0: 0.0, 1: 0.5, 2: 1.0}
+    if risk_count not in dosage_map:
+        raise ValueError(
+            f"Unexpected risk_count={risk_count!r}. "
+            f"Expected 0, 1, 2, or None."
+        )
+    return dosage_map[risk_count]
 
 
 def compute_nutrient_risk_scores(snp_calls: dict, snp_panel: list) -> dict:
@@ -89,12 +95,16 @@ def compute_nutrient_risk_scores(snp_calls: dict, snp_panel: list) -> dict:
         else:
             category = "Elevated"
 
+        total_in_domain = tested + missing
+        coverage_str = f"{tested}/{total_in_domain} SNPs tested"
+
         results[domain] = {
             "score": score,
             "category": category,
             "contributing_snps": contributing,
             "tested_snps": tested,
             "missing_snps": missing,
+            "coverage": coverage_str,
         }
 
     return results

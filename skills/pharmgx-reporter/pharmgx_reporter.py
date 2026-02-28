@@ -789,28 +789,44 @@ def call_diplotype(gene, pgx_snps):
         rsid = gdef["rsid"]
         if rsid in pgx_snps:
             return pgx_snps[rsid]["genotype"]
-        return gdef["ref"] + gdef["ref"]
+        return "NOT_TESTED"
+
+    # Count how many of this gene's SNPs were actually present in the file
+    gene_rsids = list(gdef["variants"].keys())
+    tested = [r for r in gene_rsids if r in pgx_snps]
+
+    if not tested:
+        return "NOT_TESTED"
 
     detected = []
     for rsid, vdef in gdef["variants"].items():
         if rsid in pgx_snps:
             gt = pgx_snps[rsid]["genotype"]
             alt = vdef["alt"].upper()
-            alt_count = gt.count(alt) if alt != "DEL" and alt != "INS" and alt != "TA7" else 0
+            if alt in ("DEL", "INS", "TA7"):
+                print(f"  WARNING: {gene} {rsid} has structural variant "
+                      f"alt={alt}, cannot interpret from DTC data",
+                      file=sys.stderr)
+                continue
+            alt_count = gt.count(alt)
             if alt_count > 0:
                 detected.append({"rsid": rsid, "allele": vdef["allele"],
                                  "copies": alt_count, "effect": vdef["effect"]})
 
     if gdef.get("type") == "dpyd":
         if not detected:
-            return "Normal/Normal"
+            if len(tested) == len(gene_rsids):
+                return "Normal/Normal"
+            return f"Normal/Normal ({len(tested)}/{len(gene_rsids)} SNPs tested)"
         v = detected[0]
         if v["copies"] == 2:
             return f"{v['allele']}/{v['allele']}"
         return f"Normal/{v['allele']}"
 
     if not detected:
-        return f"{gdef['ref']}/{gdef['ref']}"
+        if len(tested) == len(gene_rsids):
+            return f"{gdef['ref']}/{gdef['ref']}"
+        return f"{gdef['ref']}/{gdef['ref']} ({len(tested)}/{len(gene_rsids)} SNPs tested)"
 
     detected.sort(key=lambda v: (0 if v["effect"] == "no_function" else 1))
 
@@ -832,16 +848,23 @@ def call_diplotype(gene, pgx_snps):
 
 
 def call_phenotype(gene, diplotype):
+    if diplotype == "NOT_TESTED":
+        return "Indeterminate (not genotyped)"
+
     gdef = GENE_DEFS[gene]
     norm = diplotype.upper()
+
+    # Strip partial-coverage annotations for matching (e.g. "*1/*1 (2/4 SNPs tested)")
+    match_str = norm.split("(")[0].strip()
+
     for desc, conditions in gdef["phenotypes"].items():
         for cond in conditions:
-            if norm == cond.upper():
+            if match_str == cond.upper():
                 return desc
             parts = cond.split("/")
-            if len(parts) == 2 and norm == f"{parts[1]}/{parts[0]}".upper():
+            if len(parts) == 2 and match_str == f"{parts[1]}/{parts[0]}".upper():
                 return desc
-    return "Normal (inferred)"
+    return f"Unknown (unmapped diplotype: {diplotype})"
 
 
 # ---------------------------------------------------------------------------
@@ -855,7 +878,6 @@ def phenotype_to_key(phenotype_desc):
         "Intermediate Metabolizer": "intermediate_metabolizer",
         "Poor Metabolizer": "poor_metabolizer",
         "Ultrarapid Metabolizer": "ultrarapid_metabolizer",
-        "Normal (inferred)": "normal_metabolizer",
         "Normal Warfarin Sensitivity": "normal_warfarin_sensitivity",
         "Intermediate Warfarin Sensitivity": "intermediate_warfarin_sensitivity",
         "High Warfarin Sensitivity": "high_warfarin_sensitivity",
@@ -866,12 +888,22 @@ def phenotype_to_key(phenotype_desc):
         "Intermediate Expressor": "intermediate_metabolizer",
         "CYP3A5 Non-expressor": "poor_metabolizer",
     }
-    return mapping.get(phenotype_desc, "normal_metabolizer")
+    return mapping.get(phenotype_desc, "indeterminate")
 
 
 def get_warfarin_rec(profiles):
-    cyp2c9 = profiles.get("CYP2C9", {}).get("phenotype", "Normal Metabolizer")
-    vkorc1 = profiles.get("VKORC1", {}).get("phenotype", "Normal Warfarin Sensitivity")
+    cyp2c9_data = profiles.get("CYP2C9", {})
+    vkorc1_data = profiles.get("VKORC1", {})
+    cyp2c9 = cyp2c9_data.get("phenotype", "")
+    vkorc1 = vkorc1_data.get("phenotype", "")
+
+    # If either gene was not genotyped, we cannot provide warfarin guidance
+    if "indeterminate" in cyp2c9.lower() or "not genotyped" in cyp2c9.lower() or not cyp2c9:
+        return "indeterminate", "CYP2C9 not genotyped. Cannot provide genotype-guided warfarin dosing. Clinical testing recommended."
+    if "indeterminate" in vkorc1.lower() or "not genotyped" in vkorc1.lower() or not vkorc1:
+        return "indeterminate", "VKORC1 not genotyped. Cannot provide genotype-guided warfarin dosing. Clinical testing recommended."
+    if "unknown" in cyp2c9.lower() or "unknown" in vkorc1.lower():
+        return "indeterminate", "CYP2C9/VKORC1 phenotype could not be determined. Clinical testing recommended."
 
     cyp2c9_normal = "normal" in cyp2c9.lower()
     vkorc1_normal = "normal" in vkorc1.lower()
@@ -885,12 +917,12 @@ def get_warfarin_rec(profiles):
 
 
 def lookup_drugs(profiles):
-    results = {"standard": [], "caution": [], "avoid": []}
+    results = {"standard": [], "caution": [], "avoid": [], "indeterminate": []}
 
     for drug_name, drug in GUIDELINES.items():
         if drug.get("special") == "warfarin":
             classification, rec = get_warfarin_rec(profiles)
-            results[classification].append({
+            results.setdefault(classification, []).append({
                 "drug": drug_name, "brand": drug["brand"],
                 "class": drug["class"], "gene": "CYP2C9+VKORC1",
                 "recommendation": rec, "classification": classification,
@@ -899,17 +931,34 @@ def lookup_drugs(profiles):
 
         gene = drug["gene"]
         if gene not in profiles:
+            results["indeterminate"].append({
+                "drug": drug_name, "brand": drug["brand"],
+                "class": drug["class"], "gene": gene,
+                "recommendation": "Gene not profiled. No recommendation available.",
+                "classification": "indeterminate",
+            })
             continue
 
         pheno_key = phenotype_to_key(profiles[gene]["phenotype"])
+
+        if pheno_key == "indeterminate":
+            results["indeterminate"].append({
+                "drug": drug_name, "brand": drug["brand"],
+                "class": drug["class"], "gene": gene,
+                "recommendation": f"Gene phenotype indeterminate ({profiles[gene]['phenotype']}). Cannot assess.",
+                "classification": "indeterminate",
+            })
+            continue
+
         recs = drug.get("recs", {})
 
         if pheno_key in recs:
             classification, rec = recs[pheno_key]
         else:
-            classification, rec = "standard", "Use recommended dose."
+            classification = "indeterminate"
+            rec = f"Phenotype '{profiles[gene]['phenotype']}' not covered by available guidelines. Consult clinical pharmacogenomics."
 
-        results[classification].append({
+        results.setdefault(classification, []).append({
             "drug": drug_name, "brand": drug["brand"],
             "class": drug["class"], "gene": gene,
             "recommendation": rec, "classification": classification,
@@ -922,7 +971,7 @@ def lookup_drugs(profiles):
 # 7. Report generator
 # ---------------------------------------------------------------------------
 
-ICON = {"standard": "OK", "caution": "CAUTION", "avoid": "AVOID"}
+ICON = {"standard": "OK", "caution": "CAUTION", "avoid": "AVOID", "indeterminate": "INSUFFICIENT DATA"}
 
 
 def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_results):
@@ -945,10 +994,36 @@ def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_result
     lines.append("---")
     lines.append("")
 
+    # Data quality warning
+    not_tested = [g for g, p in profiles.items() if p["diplotype"] == "NOT_TESTED"]
+    unknown_pheno = [g for g, p in profiles.items()
+                     if "unknown" in p["phenotype"].lower() or "indeterminate" in p["phenotype"].lower()]
+    if not_tested or unknown_pheno:
+        lines.append("## DATA QUALITY WARNING")
+        lines.append("")
+        if not_tested:
+            lines.append(f"**{len(not_tested)} gene(s) could not be assessed** because the "
+                         "relevant SNPs were not found in the input file: "
+                         f"{', '.join(not_tested)}")
+            lines.append("")
+            lines.append("Drugs depending on these genes are marked INSUFFICIENT DATA below. "
+                         "Do not assume normal metabolism for untested genes.")
+            lines.append("")
+        if unknown_pheno:
+            unmapped = [g for g in unknown_pheno if g not in not_tested]
+            if unmapped:
+                lines.append(f"**{len(unmapped)} gene(s) have unmapped diplotypes**: "
+                             f"{', '.join(unmapped)}. These diplotypes could not be matched "
+                             "to a known phenotype. Clinical pharmacogenomic testing is recommended.")
+                lines.append("")
+        lines.append("---")
+        lines.append("")
+
     # Summary counts
     n_std = len(drug_results["standard"])
     n_cau = len(drug_results["caution"])
     n_avo = len(drug_results["avoid"])
+    n_ind = len(drug_results.get("indeterminate", []))
     lines.append("## Drug Response Summary")
     lines.append("")
     lines.append(f"| Category | Count |")
@@ -956,6 +1031,8 @@ def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_result
     lines.append(f"| Standard dosing | {n_std} |")
     lines.append(f"| Use with caution | {n_cau} |")
     lines.append(f"| Avoid / use alternative | {n_avo} |")
+    if n_ind > 0:
+        lines.append(f"| Insufficient data | {n_ind} |")
     lines.append("")
 
     # Alert drugs
@@ -1005,9 +1082,9 @@ def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_result
     lines.append("")
     lines.append("| Drug | Brand | Class | Gene | Status | Recommendation |")
     lines.append("|------|-------|-------|------|--------|----------------|")
-    for cat in ["avoid", "caution", "standard"]:
-        for d in sorted(drug_results[cat], key=lambda x: x["drug"]):
-            status = ICON[d["classification"]]
+    for cat in ["avoid", "caution", "indeterminate", "standard"]:
+        for d in sorted(drug_results.get(cat, []), key=lambda x: x["drug"]):
+            status = ICON.get(d["classification"], d["classification"].upper())
             lines.append(f"| {d['drug']} | {d['brand']} | {d['class']} | {d['gene']} | {status} | {d['recommendation']} |")
     lines.append("")
 
@@ -1084,6 +1161,16 @@ def main():
     print(f"  PGx SNPs found: {len(pgx_snps)}/{len(PGX_SNPS)}")
     print()
 
+    if fmt == "unknown":
+        print("WARNING: Could not detect input file format. Results may be unreliable.",
+              file=sys.stderr)
+
+    if len(pgx_snps) == 0:
+        print("ERROR: No pharmacogenomic SNPs found in this file.", file=sys.stderr)
+        print("Cannot generate a report from zero data. Verify the input file", file=sys.stderr)
+        print("is a valid 23andMe or AncestryDNA export.", file=sys.stderr)
+        sys.exit(1)
+
     # Profile genes
     profiles = {}
     for gene in GENE_DEFS:
@@ -1091,11 +1178,16 @@ def main():
         phenotype = call_phenotype(gene, diplotype)
         profiles[gene] = {"diplotype": diplotype, "phenotype": phenotype}
 
+    not_tested = [g for g, p in profiles.items() if p["diplotype"] == "NOT_TESTED"]
+    if not_tested:
+        print(f"WARNING: {len(not_tested)} gene(s) not testable from this data: {', '.join(not_tested)}",
+              file=sys.stderr)
+
     print("Gene Profiles:")
-    print(f"  {'Gene':<10} {'Diplotype':<15} {'Phenotype'}")
-    print(f"  {'-'*10} {'-'*15} {'-'*30}")
+    print(f"  {'Gene':<10} {'Diplotype':<20} {'Phenotype'}")
+    print(f"  {'-'*10} {'-'*20} {'-'*35}")
     for gene, p in profiles.items():
-        print(f"  {gene:<10} {p['diplotype']:<15} {p['phenotype']}")
+        print(f"  {gene:<10} {p['diplotype']:<20} {p['phenotype']}")
     print()
 
     # Drug lookup
@@ -1103,11 +1195,15 @@ def main():
     n_std = len(drug_results["standard"])
     n_cau = len(drug_results["caution"])
     n_avo = len(drug_results["avoid"])
+    n_ind = len(drug_results.get("indeterminate", []))
 
-    print(f"Drug Recommendations ({n_std + n_cau + n_avo} drugs):")
-    print(f"  Standard:  {n_std}")
-    print(f"  Caution:   {n_cau}")
-    print(f"  Avoid:     {n_avo}")
+    total_assessed = n_std + n_cau + n_avo + n_ind
+    print(f"Drug Recommendations ({total_assessed} drugs):")
+    print(f"  Standard:        {n_std}")
+    print(f"  Caution:         {n_cau}")
+    print(f"  Avoid:           {n_avo}")
+    if n_ind > 0:
+        print(f"  Insufficient data: {n_ind}")
     print()
 
     if n_avo > 0:

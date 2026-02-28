@@ -69,23 +69,46 @@ def extract_snp_genotypes(genotype_table: dict, snp_panel: list) -> dict:
 
         # Try direct match first
         norm = raw_geno
-        if risk_allele not in raw_geno:
+        allele_matched = risk_allele in raw_geno
+        if not allele_matched:
             # Try strand flip
             flipped = flip_genotype(raw_geno)
             if risk_allele in flipped:
                 norm = flipped
+                allele_matched = True
 
-        risk_count = norm.count(risk_allele)
-
-        results[rsid] = {
-            "rsid": rsid,
-            "gene": snp["gene"],
-            "status": "found",
-            "genotype": raw_geno,
-            "normalised": norm,
-            "risk_allele": risk_allele,
-            "risk_count": risk_count,
-            "nutrient_domain": snp["nutrient_domain"],
-        }
+        if allele_matched:
+            risk_count = norm.count(risk_allele)
+            results[rsid] = {
+                "rsid": rsid,
+                "gene": snp["gene"],
+                "status": "found",
+                "genotype": raw_geno,
+                "normalised": norm,
+                "risk_allele": risk_allele,
+                "risk_count": risk_count,
+                "nutrient_domain": snp["nutrient_domain"],
+            }
+        else:
+            # Neither raw nor flipped genotype contains the risk allele
+            print(
+                f"[WARNING] {rsid} ({snp['gene']}): genotype '{raw_geno}' "
+                f"does not contain risk allele '{risk_allele}' (even after strand flip). "
+                f"Setting allele_mismatch."
+            )
+            results[rsid] = {
+                "rsid": rsid,
+                "gene": snp["gene"],
+                "status": "allele_mismatch",
+                "genotype": raw_geno,
+                "normalised": norm,
+                "risk_allele": risk_allele,
+                "risk_count": None,
+                "nutrient_domain": snp["nutrient_domain"],
+                "warning": (
+                    f"Genotype '{raw_geno}' does not contain risk allele "
+                    f"'{risk_allele}' on either strand"
+                ),
+            }
 
     return results

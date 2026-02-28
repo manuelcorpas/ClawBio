@@ -74,7 +74,27 @@ def main():
     snp_calls = extract_snp_genotypes(genotype_table, snp_panel)
 
     present = sum(1 for v in snp_calls.values() if v["status"] == "found")
+    mismatched = sum(1 for v in snp_calls.values() if v["status"] == "allele_mismatch")
     print(f"[NutriGx] Panel coverage: {present}/{len(snp_panel)} SNPs found")
+    if mismatched > 0:
+        print(f"[NutriGx] Allele mismatches: {mismatched} SNP(s) had unrecognised alleles")
+
+    if present == 0:
+        print(
+            f"[ERROR] No panel SNPs found in input file. "
+            f"0/{len(snp_panel)} SNPs matched. Cannot generate a report. "
+            f"Check that the input file contains genotype data for the expected rsIDs.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    min_coverage = len(snp_panel) * 0.25
+    if present < min_coverage:
+        print(
+            f"[WARNING] *** LOW PANEL COVERAGE: only {present}/{len(snp_panel)} "
+            f"SNPs found ({present/len(snp_panel)*100:.0f}%). "
+            f"Report will have limited reliability. ***"
+        )
 
     print("[NutriGx] Computing nutrient risk scores ...")
     risk_scores = compute_nutrient_risk_scores(snp_calls, snp_panel)

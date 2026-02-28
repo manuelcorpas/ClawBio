@@ -202,8 +202,18 @@ def run_command(
     description: str,
     cwd: Optional[Path] = None,
     env: Optional[dict] = None,
+    critical: bool = False,
 ) -> subprocess.CompletedProcess:
-    """Run a subprocess command with proper error handling."""
+    """Run a subprocess command with proper error handling.
+
+    Args:
+        cmd: Command and arguments to run.
+        description: Human-readable description for log output.
+        cwd: Working directory for the subprocess.
+        env: Environment variables for the subprocess.
+        critical: If True, raise RuntimeError on non-zero exit code
+                  instead of logging a warning.
+    """
     print(f"  [{description}] {' '.join(cmd[:4])}...")
     try:
         result = subprocess.run(
@@ -215,13 +225,27 @@ def run_command(
             timeout=7200,  # 2-hour timeout for large metagenomes
         )
         if result.returncode != 0:
-            print(f"  WARNING: {description} returned non-zero exit code "
-                  f"{result.returncode}", file=sys.stderr)
+            stderr_tail = ""
             if result.stderr:
-                # Show last 5 lines of stderr for debugging
                 stderr_lines = result.stderr.strip().split("\n")
-                for line in stderr_lines[-5:]:
-                    print(f"    STDERR: {line}", file=sys.stderr)
+                stderr_tail = "\n".join(
+                    f"    STDERR: {line}" for line in stderr_lines[-5:]
+                )
+            if critical:
+                msg = (
+                    f"{description} failed with exit code {result.returncode}."
+                )
+                if stderr_tail:
+                    msg += f"\n{stderr_tail}"
+                raise RuntimeError(msg)
+            else:
+                print(
+                    f"  WARNING: {description} returned non-zero exit code "
+                    f"{result.returncode}",
+                    file=sys.stderr,
+                )
+                if stderr_tail:
+                    print(stderr_tail, file=sys.stderr)
         return result
     except FileNotFoundError:
         print(f"  ERROR: '{cmd[0]}' not found. Is it installed and on PATH?",
@@ -273,7 +297,12 @@ def run_kraken2(
     else:
         cmd.append(str(r1))
 
-    run_command(cmd, "Kraken2 classification")
+    run_command(cmd, "Kraken2 classification", critical=True)
+
+    if not report_path.exists():
+        raise FileNotFoundError(
+            f"Kraken2 did not produce the expected report file: {report_path}"
+        )
     return report_path
 
 
@@ -299,6 +328,10 @@ def run_bracken(
     ]
 
     run_command(cmd, "Bracken re-estimation")
+
+    if not bracken_output.exists():
+        print(f"  ERROR: Bracken did not produce the expected output file: "
+              f"{bracken_output}", file=sys.stderr)
     return bracken_output
 
 
@@ -352,7 +385,7 @@ def run_rgi(
             "--include_wildcard",
         ]
 
-    run_command(cmd, "RGI resistome profiling")
+    run_command(cmd, "RGI resistome profiling", critical=True)
 
     # RGI bwt outputs: <prefix>.allele_mapping_data.txt
     allele_file = Path(str(rgi_output) + ".allele_mapping_data.txt")
@@ -364,14 +397,23 @@ def run_rgi(
     elif gene_file.exists():
         return gene_file
     else:
-        print("  WARNING: RGI output files not found.", file=sys.stderr)
-        return rgi_output
+        raise FileNotFoundError(
+            f"RGI did not produce expected output files: "
+            f"{allele_file} or {gene_file}"
+        )
 
 
 def parse_rgi_output(rgi_path: Path) -> pd.DataFrame:
-    """Parse RGI results into a DataFrame."""
+    """Parse RGI results into a DataFrame.
+
+    If the file does not exist, returns an empty DataFrame with a
+    ``_analysis_status`` column set to ``"FAILED"`` so that downstream
+    code can distinguish "no file produced" from "zero ARGs detected".
+    """
     if not rgi_path.exists():
-        return pd.DataFrame()
+        df = pd.DataFrame(columns=["_analysis_status"])
+        df.attrs["_analysis_status"] = "FAILED"
+        return df
 
     df = pd.read_csv(rgi_path, sep="\t")
     # Filter to Perfect and Strict hits only
@@ -427,8 +469,12 @@ def run_humann3(
     output_dir: Path,
     threads: int,
     db_path: Optional[Path] = None,
-) -> Path:
-    """Run HUMAnN3 for functional pathway profiling."""
+) -> Optional[Path]:
+    """Run HUMAnN3 for functional pathway profiling.
+
+    Returns the path to the pathway abundance file, or None if no output
+    was produced.
+    """
     humann_dir = output_dir / "humann3"
     humann_dir.mkdir(parents=True, exist_ok=True)
 
@@ -465,7 +511,7 @@ def run_humann3(
         return pathabundance_files[0]
 
     print("  WARNING: HUMAnN3 pathway abundance file not found.", file=sys.stderr)
-    return humann_dir / "pathabundance.tsv"
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -685,8 +731,17 @@ def generate_report(
     figures: Dict[str, Path],
     input_files: List[Path],
     is_demo: bool,
+    rgi_failed: bool = False,
+    humann_skipped: bool = False,
+    humann_failed: bool = False,
 ) -> Path:
-    """Generate the full markdown report."""
+    """Generate the full markdown report.
+
+    Args:
+        rgi_failed: True if RGI did not produce output (report says FAILED).
+        humann_skipped: True if HUMAnN3 was intentionally skipped by user.
+        humann_failed: True if HUMAnN3 ran but did not produce output.
+    """
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     report_path = output_dir / "report.md"
 
@@ -716,13 +771,47 @@ def generate_report(
         tax_lines = ["  - No taxonomy data available"]
 
     # Resistome summary
-    n_args = len(resistome_df) if not resistome_df.empty else 0
-    n_critical = len(who_df[who_df["who_priority"] == "Critical"]) if not who_df.empty else 0
-    n_high = len(who_df[who_df["who_priority"] == "High"]) if not who_df.empty else 0
+    if rgi_failed:
+        resistome_section = """## Antimicrobial Resistance Profile
+
+> **ANALYSIS FAILED**: RGI did not produce output. Resistome could not be profiled.
+> Re-run with valid inputs or check that the CARD database is correctly installed.
+
+"""
+    else:
+        n_args = len(resistome_df) if not resistome_df.empty else 0
+        n_critical = len(who_df[who_df["who_priority"] == "Critical"]) if not who_df.empty else 0
+        n_high = len(who_df[who_df["who_priority"] == "High"]) if not who_df.empty else 0
+        resistome_section = f"""## Antimicrobial Resistance Profile
+
+{fig_refs.get("resistome", "")}
+
+Total ARG detections: **{n_args}**
+- WHO-Critical priority: **{n_critical}**
+- WHO-High priority: **{n_high}**
+
+### WHO-Critical ARG Summary
+
+{fig_refs.get("who_critical", "")}
+
+"""
 
     # Pathway summary
     pathway_section = ""
-    if pathways_df is not None and not pathways_df.empty:
+    if humann_failed:
+        pathway_section = """## Functional Pathways (HUMAnN3)
+
+> **FUNCTIONAL PROFILING FAILED**: HUMAnN3 did not produce pathway output.
+> Check database installation and input file compatibility.
+
+"""
+    elif humann_skipped:
+        pathway_section = """## Functional Pathways (HUMAnN3)
+
+*Functional profiling was skipped (no database specified or --skip-functional used).*
+
+"""
+    elif pathways_df is not None and not pathways_df.empty:
         n_pathways = len(pathways_df)
         top_pw = pathways_df.iloc[0]
         pw_name = top_pw.get("pathway", top_pw.get("# Pathway", "Unknown"))
@@ -759,19 +848,7 @@ Top pathway: {pw_name}
 
 {chr(10).join(tax_lines)}
 
-## Antimicrobial Resistance Profile
-
-{fig_refs.get("resistome", "")}
-
-Total ARG detections: **{n_args}**
-- WHO-Critical priority: **{n_critical}**
-- WHO-High priority: **{n_high}**
-
-### WHO-Critical ARG Summary
-
-{fig_refs.get("who_critical", "")}
-
-{pathway_section}---
+{resistome_section}{pathway_section}---
 
 ## Methods
 
@@ -1121,16 +1198,29 @@ def run_pipeline(args: argparse.Namespace) -> None:
 
     # --- Step 2: Resistome ---
     print("Step 2/3: Resistome profiling")
-    rgi_output = run_rgi(r1, r2, output_dir, threads)
-    res_df = parse_rgi_output(rgi_output)
-    who_df = classify_who_priority(res_df)
-    res_df.to_csv(tables_dir / "resistome_profile.tsv", sep="\t", index=False)
-    who_df.to_csv(tables_dir / "who_priority_args.tsv", sep="\t", index=False)
-    n_critical = len(who_df[who_df["who_priority"] == "Critical"]) if not who_df.empty else 0
-    print(f"  ARG hits: {len(res_df)} (WHO-Critical: {n_critical})\n")
+    rgi_failed = False
+    try:
+        rgi_output = run_rgi(r1, r2, output_dir, threads)
+        res_df = parse_rgi_output(rgi_output)
+    except (RuntimeError, FileNotFoundError) as exc:
+        print(f"  ERROR: RGI failed: {exc}", file=sys.stderr)
+        rgi_failed = True
+        res_df = pd.DataFrame()
+
+    if rgi_failed:
+        who_df = pd.DataFrame(columns=["gene", "drug_class", "who_priority"])
+        print("  RESISTOME ANALYSIS FAILED -- see errors above.\n")
+    else:
+        who_df = classify_who_priority(res_df)
+        res_df.to_csv(tables_dir / "resistome_profile.tsv", sep="\t", index=False)
+        who_df.to_csv(tables_dir / "who_priority_args.tsv", sep="\t", index=False)
+        n_critical = len(who_df[who_df["who_priority"] == "Critical"]) if not who_df.empty else 0
+        print(f"  ARG hits: {len(res_df)} (WHO-Critical: {n_critical})\n")
 
     # --- Step 3: Functional (optional) ---
     pw_df = None
+    humann_skipped = False
+    humann_failed = False
     if not args.skip_functional:
         print("Step 3/3: Functional profiling")
         humann_db = Path(args.humann_db) if args.humann_db else None
@@ -1138,14 +1228,29 @@ def run_pipeline(args: argparse.Namespace) -> None:
             env_db = os.environ.get("HUMANN_DB")
             if env_db:
                 humann_db = Path(env_db)
-        pw_output = run_humann3(r1, r2, output_dir, threads, humann_db)
-        if pw_output.exists():
-            pw_df = pd.read_csv(pw_output, sep="\t", comment="#")
-            pw_df.to_csv(tables_dir / "pathway_abundance.tsv", sep="\t", index=False)
-            print(f"  Pathways: {len(pw_df)}\n")
+            else:
+                print("  NOTE: No HUMAnN3 database specified (--humann-db or "
+                      "$HUMANN_DB). HUMAnN3 will be skipped.", file=sys.stderr)
+                humann_skipped = True
+        if humann_db is not None and not humann_db.exists():
+            print(f"  WARNING: HUMAnN3 database path does not exist: {humann_db}",
+                  file=sys.stderr)
+            humann_skipped = True
+
+        if not humann_skipped:
+            pw_output = run_humann3(r1, r2, output_dir, threads, humann_db)
+            if pw_output is not None and pw_output.exists():
+                pw_df = pd.read_csv(pw_output, sep="\t", comment="#")
+                pw_df.to_csv(tables_dir / "pathway_abundance.tsv", sep="\t", index=False)
+                print(f"  Pathways: {len(pw_df)}\n")
+            else:
+                humann_failed = True
+                print("  ERROR: HUMAnN3 did not produce pathway output.\n",
+                      file=sys.stderr)
         else:
-            print("  WARNING: No pathway output generated.\n")
+            print("  Step 3/3: Functional profiling (SKIPPED -- no database)\n")
     else:
+        humann_skipped = True
         print("Step 3/3: Functional profiling (SKIPPED)\n")
 
     # --- Figures ---
@@ -1156,12 +1261,12 @@ def run_pipeline(args: argparse.Namespace) -> None:
         plot_taxonomy_barchart(tax_df, tax_fig_path)
         figures["taxonomy"] = tax_fig_path
 
-        if not res_df.empty:
+        if not rgi_failed and not res_df.empty:
             res_fig_path = figures_dir / "resistome_heatmap.png"
             plot_resistome_heatmap(res_df, res_fig_path)
             figures["resistome"] = res_fig_path
 
-        if not who_df.empty:
+        if not rgi_failed and not who_df.empty:
             who_fig_path = figures_dir / "who_critical_args.png"
             plot_who_critical_args(who_df, who_fig_path)
             figures["who_critical"] = who_fig_path
@@ -1179,6 +1284,9 @@ def run_pipeline(args: argparse.Namespace) -> None:
         figures=figures,
         input_files=input_files,
         is_demo=False,
+        rgi_failed=rgi_failed,
+        humann_skipped=humann_skipped,
+        humann_failed=humann_failed,
     )
 
     # --- Reproducibility ---

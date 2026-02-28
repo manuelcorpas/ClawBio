@@ -145,8 +145,10 @@ def generate_report(snp_calls, risk_scores, snp_panel, output_dir, figures=True,
         label = DOMAIN_LABELS.get(domain, domain)
         score = data["score"] if data["score"] is not None else "N/A"
         cat = data["category"]
+        coverage = data.get("coverage", "")
         emoji = {"Low": "🟢", "Moderate": "🟡", "Elevated": "🔴", "Unknown": "⚪"}.get(cat, "")
-        lines.append(f"| {label} | {score} | {emoji} {cat} |")
+        cat_display = f"{cat} ({coverage})" if coverage else cat
+        lines.append(f"| {label} | {score} | {emoji} {cat_display} |")
     lines += ["", "---", ""]
 
     # ── Per-Domain Sections ───────────────────────────────────────────────────
@@ -157,13 +159,17 @@ def generate_report(snp_calls, risk_scores, snp_panel, output_dir, figures=True,
         label = DOMAIN_LABELS.get(domain, domain)
         score = data["score"]
         cat = data["category"]
-        rec = RECOMMENDATIONS.get(domain, {}).get(cat, "No specific recommendation available.")
+        if cat == "Unknown":
+            rec = "Insufficient genetic data to assess this domain."
+        else:
+            rec = RECOMMENDATIONS.get(domain, {}).get(cat, "No specific recommendation available.")
 
+        coverage = data.get("coverage", "")
         lines += [
             f"### {label}",
             "",
             f"**Risk Score**: {score}/10 — **{cat}**  ",
-            f"**SNPs tested**: {data['tested_snps']} | **Not on chip**: {data['missing_snps']}",
+            f"**SNPs tested**: {data['tested_snps']} | **Not on chip**: {data['missing_snps']} | **Coverage**: {coverage}",
             "",
         ]
 

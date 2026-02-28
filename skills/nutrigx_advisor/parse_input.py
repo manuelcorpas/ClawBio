@@ -25,9 +25,11 @@ def detect_format(filepath: str) -> str:
     ext = Path(filepath).suffix.lower()
     if ext == ".vcf":
         return "vcf"
-    if ext == ".csv":
-        return "ancestry"
-    return "23andme"
+    raise ValueError(
+        f"Cannot auto-detect genetic file format for '{filepath}'. "
+        f"No recognized header found and extension '{ext}' is ambiguous. "
+        f"Please specify --format explicitly (23andme, ancestry, or vcf)."
+    )
 
 
 def parse_23andme(filepath: str) -> dict:
@@ -95,15 +97,24 @@ def parse_vcf(filepath: str) -> dict:
             alleles = [ref] + alts
 
             fmt = parts[8].split(":")
-            gt_idx = fmt.index("GT") if "GT" in fmt else 0
+            if "GT" not in fmt:
+                print(
+                    f"[WARNING] VCF line for {rsid}: FORMAT field '{parts[8]}' "
+                    f"does not contain GT — skipping variant"
+                )
+                continue
+            gt_idx = fmt.index("GT")
             sample = parts[gt_col].split(":")[gt_idx]
             # Handle phased (|) or unphased (/)
             indices = re.split(r"[|/]", sample)
             try:
                 called = "".join(alleles[int(i)] for i in indices if i != ".")
                 genotypes[rsid] = called
-            except (IndexError, ValueError):
-                pass
+            except (IndexError, ValueError) as exc:
+                print(
+                    f"[WARNING] VCF parse error for {rsid}: {exc}. "
+                    f"Alleles={alleles}, GT indices={indices}. Skipping variant."
+                )
     return genotypes
 
 

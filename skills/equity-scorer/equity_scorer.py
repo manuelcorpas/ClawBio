@@ -92,7 +92,12 @@ def parse_vcf(filepath: Path) -> Tuple[List[str], List[str], np.ndarray]:
             variant_ids.append(vid)
 
             fmt_fields = parts[8].split(":")
-            gt_idx = fmt_fields.index("GT") if "GT" in fmt_fields else 0
+            if "GT" not in fmt_fields:
+                raise ValueError(
+                    "GT field not found in FORMAT column at variant %s "
+                    "(FORMAT=%s). Cannot parse genotypes." % (vid, parts[8])
+                )
+            gt_idx = fmt_fields.index("GT")
 
             row = []
             for sample_field in parts[9:]:
@@ -195,8 +200,10 @@ def compute_allele_frequencies(
         valid = sub != -1
         allele_sum = np.where(valid, sub, 0).sum(axis=0).astype(np.float64)
         allele_count = valid.sum(axis=0) * 2  # diploid
-        allele_count = np.where(allele_count == 0, 1, allele_count)  # avoid div by 0
-        afs[pop] = allele_sum / allele_count
+        # Sites with no valid genotypes get NaN (not fabricated 0.0)
+        with np.errstate(invalid="ignore"):
+            af = np.where(allele_count == 0, np.nan, allele_sum / allele_count)
+        afs[pop] = af
     return afs
 
 
@@ -224,20 +231,21 @@ def compute_heterozygosity(
         sub = geno_matrix[indices, :]
         valid = sub != -1
         n_valid = valid.sum(axis=0).astype(np.float64)
-        n_valid = np.where(n_valid == 0, 1, n_valid)
 
         # Observed: count of het genotypes (value == 1)
         het_count = ((sub == 1) & valid).sum(axis=0).astype(np.float64)
-        site_obs_het = het_count / n_valid
+        # Sites with no valid genotypes get NaN (not fabricated 0.0)
+        with np.errstate(invalid="ignore"):
+            site_obs_het = np.where(n_valid == 0, np.nan, het_count / n_valid)
         obs_per_site[pop] = site_obs_het
-        obs_het[pop] = float(np.mean(site_obs_het))
+        obs_het[pop] = float(np.nanmean(site_obs_het))
 
-        # Expected: 2pq
+        # Expected: 2pq (NaN propagates from allele frequencies with no data)
         p = afs[pop]
         q = 1 - p
         site_exp_het = 2 * p * q
         exp_per_site[pop] = site_exp_het
-        exp_het[pop] = float(np.mean(site_exp_het))
+        exp_het[pop] = float(np.nanmean(site_exp_het))
 
     return obs_het, exp_het, obs_per_site, exp_per_site
 
@@ -292,7 +300,8 @@ def compute_pairwise_fst(
             fst_val = float(np.sum(numerator[valid]) / np.sum(denominator[valid]))
             fst_val = max(0.0, fst_val)
         else:
-            fst_val = 0.0
+            # No polymorphic sites: FST is undefined, not zero
+            fst_val = np.nan
 
         fst_matrix[i, j] = fst_val
         fst_matrix[j, i] = fst_val
@@ -334,18 +343,56 @@ def compute_pca(
 # HEIM EQUITY SCORE
 # ===================================================================
 
-def compute_representation_index(pop_counts: Dict[str, int]) -> float:
-    """Measure how well sample proportions match global proportions (0-1)."""
+def compute_representation_index(pop_counts: Dict[str, int]) -> dict:
+    """Measure how well sample proportions match global proportions (0-1).
+
+    Returns:
+        dict with keys: representation_index (float or None),
+                        unknown_fraction (float),
+                        warning (str or None)
+    """
     total = sum(pop_counts.values())
     if total == 0:
-        return 0.0
+        return {
+            "representation_index": None,
+            "unknown_fraction": 0.0,
+            "warning": "No samples provided.",
+        }
+
+    unknown_count = pop_counts.get("UNKNOWN", 0)
+    unknown_fraction = unknown_count / total
+
+    if unknown_fraction > 0.5:
+        return {
+            "representation_index": None,
+            "unknown_fraction": round(unknown_fraction, 3),
+            "warning": (
+                "%.1f%% of samples have UNKNOWN population. "
+                "Representation index is unreliable and has been set to None. "
+                "Provide a population map to resolve." % (unknown_fraction * 100)
+            ),
+        }
+
     sample_props = {k: v / total for k, v in pop_counts.items()}
     max_deviation = 0.0
     for pop, global_prop in GLOBAL_PROPORTIONS.items():
         sample_prop = sample_props.get(pop, 0.0)
         deviation = abs(sample_prop - global_prop)
         max_deviation = max(max_deviation, deviation)
-    return max(0.0, 1.0 - max_deviation)
+    ri = max(0.0, 1.0 - max_deviation)
+
+    warning = None
+    if unknown_fraction > 0:
+        warning = (
+            "%.1f%% of samples have UNKNOWN population. "
+            "Representation index may be affected." % (unknown_fraction * 100)
+        )
+
+    return {
+        "representation_index": ri,
+        "unknown_fraction": round(unknown_fraction, 3),
+        "warning": warning,
+    }
 
 
 def compute_heterozygosity_balance(het_values: Dict[str, float]) -> float:
@@ -387,13 +434,23 @@ def compute_heim_score(
 ) -> dict:
     """Compute the composite HEIM Equity Score (0-100)."""
     n_pops = len(pop_counts)
-    ri = compute_representation_index(pop_counts)
+    ri_result = compute_representation_index(pop_counts)
+    ri = ri_result["representation_index"]
+    ri_warning = ri_result.get("warning")
+    unknown_fraction = ri_result["unknown_fraction"]
+
+    if ri_warning:
+        print("  WARNING: %s" % ri_warning, file=sys.stderr)
+
+    # If representation_index is None (unreliable), treat as 0 for scoring
+    ri_for_score = ri if ri is not None else 0.0
+
     hb = compute_heterozygosity_balance(het_values)
     fc = compute_fst_coverage(n_pops, n_pairwise_fst)
     gs = compute_geographic_spread(set(pop_counts.keys()))
 
     w1, w2, w3, w4 = weights
-    score = (w1 * ri + w2 * hb + w3 * fc + w4 * gs) * 100
+    score = (w1 * ri_for_score + w2 * hb + w3 * fc + w4 * gs) * 100
 
     rating = (
         "Excellent" if score >= 80 else
@@ -407,7 +464,7 @@ def compute_heim_score(
         "heim_score": round(score, 1),
         "rating": rating,
         "components": {
-            "representation_index": round(ri, 3),
+            "representation_index": round(ri, 3) if ri is not None else None,
             "heterozygosity_balance": round(hb, 3),
             "fst_coverage": round(fc, 3),
             "geographic_spread": round(gs, 3),
@@ -416,6 +473,8 @@ def compute_heim_score(
         "n_samples": sum(pop_counts.values()),
         "n_populations": n_pops,
         "population_counts": pop_counts,
+        "unknown_fraction": unknown_fraction,
+        "representation_warning": ri_warning,
     }
 
 
@@ -699,6 +758,19 @@ def generate_report(
             sum(pca_variance[:min(5, len(pca_variance))]) * 100,
         )
 
+    # Representation warning
+    rep_warning_note = ""
+    if heim_result.get("representation_warning"):
+        rep_warning_note = "\n> **WARNING**: %s\n" % heim_result["representation_warning"]
+
+    # Heterozygosity source note
+    het_source_note = ""
+    if heim_result.get("het_source") == "literature_estimate":
+        het_source_note = (
+            "\n> **Note**: Heterozygosity values are literature estimates "
+            "(not computed from data). Provide VCF genotype data for computed values.\n"
+        )
+
     # Most/least represented
     sorted_pops = sorted(pop_counts.items(), key=lambda x: x[1], reverse=True)
     most_rep = sorted_pops[0]
@@ -728,7 +800,7 @@ def generate_report(
 | FST Coverage | %(fc).3f | %(w3)s | Fraction of pairwise comparisons computed |
 | Geographic Spread | %(gs).3f | %(w4)s | Continental groups represented (out of 7) |
 
-### Key Findings
+%(rep_warning_note)s%(het_source_note)s### Key Findings
 
 - **Most represented**: %(most_pop)s (%(most_pct).1f%%, %(most_ratio).1fx global proportion)
 - **Least represented**: %(least_pop)s (%(least_pct).1f%%, %(least_ratio).1fx global proportion)
@@ -787,7 +859,7 @@ python equity_scorer.py --input %(input_name)s --output %(output_name)s
         "score": heim_result["heim_score"],
         "rating": heim_result["rating"],
         "gauge_fig": fig_refs.get("HEIM Gauge", ""),
-        "ri": components["representation_index"],
+        "ri": components["representation_index"] if components["representation_index"] is not None else 0.0,
         "hb": components["heterozygosity_balance"],
         "fc": components["fst_coverage"],
         "gs": components["geographic_spread"],
@@ -810,6 +882,8 @@ python equity_scorer.py --input %(input_name)s --output %(output_name)s
         "fst_section": fst_section,
         "pca_section": pca_section,
         "output_name": output_dir.name,
+        "rep_warning_note": rep_warning_note,
+        "het_source_note": het_source_note,
     }
     return report
 
@@ -839,6 +913,16 @@ def run_vcf_pipeline(
     # Population assignments
     pop_map = load_population_map(pop_map_path, samples)
     sample_pops = [pop_map.get(s, "UNKNOWN") for s in samples]
+    # Warn about unmapped samples
+    unmapped = [s for s, p in zip(samples, sample_pops) if p == "UNKNOWN"]
+    if unmapped:
+        pct = len(unmapped) / len(samples) * 100
+        print(
+            "  WARNING: %d/%d samples (%.1f%%) could not be mapped to a population "
+            "and were assigned UNKNOWN. Provide a --pop-map to resolve."
+            % (len(unmapped), len(samples), pct),
+            file=sys.stderr,
+        )
     pop_counts = dict(Counter(sample_pops))
     pops = sorted(pop_counts.keys())
     print("  Populations: %s" % ", ".join("%s (n=%d)" % (p, pop_counts[p]) for p in pops))
@@ -868,6 +952,7 @@ def run_vcf_pipeline(
     # HEIM score
     print("Computing HEIM Equity Score...")
     heim_result = compute_heim_score(pop_counts, obs_het, len(fst_dict), weights)
+    heim_result["het_source"] = "computed"
     print("  Score: %s/100 (%s)" % (heim_result["heim_score"], heim_result["rating"]))
 
     # Save tables
@@ -948,6 +1033,8 @@ def run_csv_pipeline(
     pop_counts = dict(Counter(df["population"]))
 
     # Literature-based heterozygosity estimates when no genotype data
+    # These are NOT computed from the input data — they are population-level
+    # estimates from published literature (e.g. 1000 Genomes).
     het_estimates = {
         "AFR": 0.35, "AMR": 0.28, "EAS": 0.25,
         "EUR": 0.27, "SAS": 0.26, "OCE": 0.30,
@@ -956,10 +1043,11 @@ def run_csv_pipeline(
     obs_het = {pop: het_estimates.get(pop.upper(), 0.25) for pop in pop_counts}
     exp_het = obs_het.copy()
 
-    n_pops = len(pop_counts)
-    n_pairwise = n_pops * (n_pops - 1) // 2
+    # No FST was computed from CSV data — set to 0
+    n_pairwise = 0
 
     heim_result = compute_heim_score(pop_counts, obs_het, n_pairwise, weights)
+    heim_result["het_source"] = "literature_estimate"
 
     pd.DataFrame([
         {"population": k, "count": v, "proportion": v / sum(pop_counts.values())}

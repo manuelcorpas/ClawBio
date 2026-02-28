@@ -774,7 +774,7 @@ python equity_scorer.py --input %(input_name)s --output %(output_name)s
 
 ## References
 
-- Corpas, M. (2026). ClawBio. https://github.com/manuelcorpas/ClawBio
+- Corpas, M. (2026). ClawBio. https://github.com/ClawBio/ClawBio
 - Hudson, R.R., Slatkin, M. & Maddison, W.P. (1992). Estimation of levels of gene flow from DNA sequence data. Genetics, 132(2), 583-589.
 - The 1000 Genomes Project Consortium (2015). A global reference for human genetic variation. Nature, 526, 68-74.
 """ % {

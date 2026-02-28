@@ -231,7 +231,7 @@ If you use ClawBio in your research, please cite:
   author = {Corpas, Manuel},
   title = {ClawBio: An Open-Source Library of AI Agent Skills for Reproducible Bioinformatics},
   year = {2026},
-  url = {https://github.com/manuelcorpas/ClawBio}
+  url = {https://github.com/ClawBio/ClawBio}
 }
 ```
 

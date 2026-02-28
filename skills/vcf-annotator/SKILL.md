@@ -12,7 +12,7 @@ metadata:
       config: []
     always: false
     emoji: "🦖"
-    homepage: https://github.com/manuelcorpas/ClawBio
+    homepage: https://github.com/ClawBio/ClawBio
     os: [macos, linux]
     install:
       - kind: uv

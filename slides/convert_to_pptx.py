@@ -807,7 +807,7 @@ set_bg(s)
 add_text(s, "Get Started Tonight",
          Inches(0.5), Inches(0.5), Inches(12.3), Inches(1),
          font_size=40, bold=True)
-add_text(s, "github.com/manuelcorpas/ClawBio",
+add_text(s, "github.com/ClawBio/ClawBio",
          Inches(0.5), Inches(1.6), Inches(12.3), Inches(0.8),
          font_size=32, color=ACCENT, bold=True)
 add_text(s, "Repository",
@@ -877,7 +877,7 @@ add_text(s, "Thank You",
 add_text(s, "Questions welcome. And at the pub after.",
          Inches(0.5), Inches(2.5), Inches(12.3), Inches(0.7),
          font_size=24, color=GRAY)
-tf = add_text(s, "GitHub: github.com/manuelcorpas/ClawBio",
+tf = add_text(s, "GitHub: github.com/ClawBio/ClawBio",
               Inches(2.5), Inches(3.6), Inches(8.3), Inches(0.5),
               font_size=22, color=ACCENT, alignment=PP_ALIGN.LEFT)
 add_text(s, "LinkedIn: linkedin.com/in/manuelcorpas",
@@ -891,7 +891,7 @@ add_text(s, 'Book: "AI Fluency: A Practical Guide to Leveraging AI\n'
          'Chatbots for Academic and Professional Work" (2026)',
          Inches(1.5), Inches(5.7), Inches(10.3), Inches(0.8),
          font_size=20, color=ORANGE, bold=True)
-add_text(s, "Slides: github.com/manuelcorpas/ClawBio/slides",
+add_text(s, "Slides: github.com/ClawBio/ClawBio/slides",
          Inches(1), Inches(6.7), Inches(11.3), Inches(0.5),
          font_size=16, color=DARK_GRAY)
 add_notes(s, "Thank you. I will be at the pub after. Come talk to me if you want to "

@@ -195,7 +195,7 @@ python pharmgx_reporter.py --input demo_patient.txt --output report
 
 ## References
 
-- Corpas, M. (2026). ClawBio. https://github.com/manuelcorpas/ClawBio
+- Corpas, M. (2026). ClawBio. https://github.com/ClawBio/ClawBio
 - CPIC. Clinical Pharmacogenetics Implementation Consortium. https://cpicpgx.org/
 - Caudle, K.E. et al. (2014). Standardizing terms for clinical pharmacogenetic test results. Genet Med, 16(9), 655-663.
 - PharmGKB. https://www.pharmgkb.org/

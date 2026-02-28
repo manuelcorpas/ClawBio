@@ -40,19 +40,19 @@ html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui,
 /* ===== TYPOGRAPHY ===== */
 h1 { font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; text-align: center; line-height: 1.2; margin-bottom: 1.5rem; }
 h2 { font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 600; text-align: center; line-height: 1.3; margin-bottom: 1.2rem; }
-h3 { font-size: clamp(1.2rem, 2vw, 1.8rem); font-weight: 500; color: #8b949e; text-align: center; margin-bottom: 1rem; }
+h3 { font-size: clamp(1.2rem, 2vw, 1.8rem); font-weight: 500; color: #adbac7; text-align: center; margin-bottom: 1rem; }
 p, li { font-size: clamp(1rem, 1.8vw, 1.4rem); line-height: 1.6; }
 ul { list-style: none; text-align: left; max-width: 80%; }
 ul li { padding: 0.4em 0; padding-left: 1.5em; position: relative; }
 ul li::before { content: "→"; position: absolute; left: 0; color: #58a6ff; }
-.small { font-size: clamp(0.85rem, 1.4vw, 1.1rem); color: #8b949e; }
+.small { font-size: clamp(0.85rem, 1.4vw, 1.1rem); color: #adbac7; }
 
 /* ===== COLOURS ===== */
 .accent { color: #58a6ff; }
-.green { color: #3fb950; }
-.orange { color: #d29922; }
-.red { color: #f85149; }
-.purple { color: #bc8cff; }
+.green { color: #56d364; }
+.orange { color: #e3b341; }
+.red { color: #ffa198; }
+.purple { color: #d2a8ff; }
 .highlight { background: rgba(88,166,255,0.15); padding: 0.15em 0.4em; border-radius: 4px; }
 
 /* ===== LAYOUT HELPERS ===== */
@@ -75,9 +75,9 @@ pre {
     text-align: left; overflow-x: auto; max-width: 90%; width: fit-content;
 }
 code { font-family: 'SF Mono', 'Fira Code', monospace; }
-.cmd { color: #3fb950; }
-.out { color: #8b949e; }
-.val { color: #d29922; }
+.cmd { color: #56d364; }
+.out { color: #adbac7; }
+.val { color: #e3b341; }
 
 /* ===== TIP NUMBER ===== */
 .tip-num {
@@ -89,7 +89,8 @@ code { font-family: 'SF Mono', 'Fira Code', monospace; }
 /* ===== SCORE BADGE ===== */
 .score-badge {
     display: inline-block; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 800;
-    background: linear-gradient(135deg, #3fb950, #58a6ff);
+    color: #56d364;
+    background: linear-gradient(135deg, #56d364, #58a6ff);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
 }
@@ -100,13 +101,13 @@ code { font-family: 'SF Mono', 'Fira Code', monospace; }
 /* ===== SLIDE COUNTER ===== */
 .counter {
     position: fixed; bottom: 12px; right: 20px; font-size: 0.85rem;
-    color: #484f58; z-index: 100;
+    color: #768390; z-index: 100;
 }
 
 /* ===== SLIDE LOGO (bottom-left on every slide) ===== */
 .slide-logo {
     position: fixed; bottom: 10px; left: 16px; z-index: 100;
-    width: 44px; height: 44px; opacity: 0.55;
+    width: 44px; height: 44px; opacity: 0.8;
     border-radius: 6px;
 }
 
@@ -115,9 +116,9 @@ code { font-family: 'SF Mono', 'Fira Code', monospace; }
 
 /* ===== TITLE SLIDE SPECIAL ===== */
 .title-slide h1 { font-size: clamp(2.2rem, 4.5vw, 4rem); }
-.title-slide .subtitle { font-size: clamp(1.1rem, 2vw, 1.6rem); color: #8b949e; margin-top: 0.5rem; }
+.title-slide .subtitle { font-size: clamp(1.1rem, 2vw, 1.6rem); color: #adbac7; margin-top: 0.5rem; }
 .title-slide .author { margin-top: 2rem; font-size: clamp(1rem, 1.6vw, 1.3rem); color: #58a6ff; }
-.title-slide .meta { margin-top: 0.5rem; font-size: clamp(0.85rem, 1.3vw, 1rem); color: #484f58; }
+.title-slide .meta { margin-top: 0.5rem; font-size: clamp(0.85rem, 1.3vw, 1rem); color: #768390; }
 </style>
 </head>
 <body>
@@ -1144,11 +1145,11 @@ Walk me through how to create it.</span></pre>
     <h1>Thank You</h1>
     <div class="subtitle">Questions welcome — and at the pub after</div>
     <div class="gap" style="margin-top: 2rem;">
-        <p><span class="accent">GitHub</span>: github.com/manuelcorpas/ClawBio</p>
+        <p><span class="accent">GitHub</span>: github.com/ClawBio/ClawBio</p>
         <p><span class="accent">LinkedIn</span>: linkedin.com/in/manuelcorpas</p>
         <p><span class="accent">X</span>: @manuelcorpas</p>
     </div>
-    <p class="gap small">🦖 Slides: github.com/manuelcorpas/ClawBio/slides</p>
+    <p class="gap small">🦖 Slides: github.com/ClawBio/ClawBio/slides</p>
     <div class="notes">
         Thank you. I'll be at the pub after — come talk to me if you want to
         build a skill, have ideas for the library, or just want to chat about

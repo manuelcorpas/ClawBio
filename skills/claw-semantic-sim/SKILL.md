@@ -35,7 +35,7 @@ outputs:
 metadata:
   openclaw:
     category: bioinformatics
-    homepage: https://github.com/manuelcorpas/ClawBio
+    homepage: https://github.com/ClawBio/ClawBio
     min_python: "3.11"
     dependencies:
       - torch
@@ -159,4 +159,4 @@ Reproducibility:
 If you use this skill in a publication, please cite:
 
 - Corpas, M. et al. (2026). HEIM: Health Equity Index for Measuring structural bias in biomedical research. Under review.
-- Corpas, M. (2026). ClawBio. https://github.com/manuelcorpas/ClawBio
+- Corpas, M. (2026). ClawBio. https://github.com/ClawBio/ClawBio

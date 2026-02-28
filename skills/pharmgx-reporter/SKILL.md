@@ -22,7 +22,7 @@ outputs:
 metadata:
   openclaw:
     category: bioinformatics
-    homepage: https://github.com/manuelcorpas/ClawBio
+    homepage: https://github.com/ClawBio/ClawBio
     min_python: "3.9"
     dependencies: []
 ---

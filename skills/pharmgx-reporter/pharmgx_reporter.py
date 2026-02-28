@@ -1048,7 +1048,7 @@ def generate_report(input_path, fmt, total_snps, pgx_snps, profiles, drug_result
     # References
     lines.append("## References")
     lines.append("")
-    lines.append("- Corpas, M. (2026). ClawBio. https://github.com/manuelcorpas/ClawBio")
+    lines.append("- Corpas, M. (2026). ClawBio. https://github.com/ClawBio/ClawBio")
     lines.append("- CPIC. Clinical Pharmacogenetics Implementation Consortium. https://cpicpgx.org/")
     lines.append("- Caudle, K.E. et al. (2014). Standardizing terms for clinical pharmacogenetic test results. Genet Med, 16(9), 655-663.")
     lines.append("- PharmGKB. https://www.pharmgkb.org/")

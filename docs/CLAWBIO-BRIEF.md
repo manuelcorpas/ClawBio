@@ -36,21 +36,23 @@ User request (natural language)
             → Output: Markdown report + figures + audit log + repro bundle
 ```
 
-## 🦖 The Skills (5 MVP, 6 planned)
+## 🦖 The Skills (7 production, 6 planned)
 
-| Skill | Status | What it does |
-|-------|--------|-------------|
-| Bio Orchestrator | **MVP** | Routes requests to the right skill automatically |
-| PharmGx Reporter | **MVP** | Pharmacogenomic report: 12 genes, 51 drugs, CPIC guidelines |
-| Ancestry PCA | **MVP** | PCA decomposition vs SGDP (345 samples, 164 global populations) |
-| Semantic Similarity | **MVP** | Semantic Isolation Index for 175 GBD diseases from 13.1M PubMed abstracts |
-| NutriGx Advisor | **MVP** | Personalised nutrition report from 23andMe/AncestryDNA/VCF — 40 SNPs across 13 nutrient domains |
-| Equity Scorer | Planned | HEIM diversity metrics from VCF/ancestry data |
-| VCF Annotator | Planned | Variant annotation with VEP and ancestry context |
-| Lit Synthesizer | Planned | PubMed/bioRxiv search with LLM summarisation |
-| scRNA Orchestrator | Planned | Seurat/Scanpy automation: QC, clustering, DE analysis |
-| Seq Wrangler | Planned | FastQC, alignment, BAM processing |
-| Repro Enforcer | Planned | Export any analysis as Conda env + Singularity + Nextflow |
+| Skill | Status | Tests | What it does |
+|-------|--------|-------|-------------|
+| Bio Orchestrator | **Production** | — | Routes requests to the right skill automatically |
+| PharmGx Reporter | **Production** | 24 | Pharmacogenomic report: 12 genes, 51 drugs, CPIC guidelines |
+| Equity Scorer | **Production** | 24 | HEIM diversity metrics from VCF/ancestry data (0-100 score) |
+| NutriGx Advisor | **Production** | 9 | Personalised nutrition report from 23andMe/AncestryDNA/VCF — 40 SNPs across 13 nutrient domains |
+| Metagenomics Profiler | **Production** | — | Shotgun metagenomics: Kraken2 + RGI + HUMAnN3 |
+| Ancestry PCA | **Production** | — | PCA decomposition vs SGDP (345 samples, 164 global populations) |
+| Semantic Similarity | **Production** | — | Semantic Isolation Index for 175 GBD diseases from 13.1M PubMed abstracts |
+| VCF Annotator | Planned | — | Variant annotation with VEP and ancestry context |
+| Lit Synthesizer | Planned | — | PubMed/bioRxiv search with LLM summarisation |
+| scRNA Orchestrator | Planned | — | Seurat/Scanpy automation: QC, clustering, DE analysis |
+| Struct Predictor | Planned | — | AlphaFold/Boltz protein structure prediction |
+| Seq Wrangler | Planned | — | FastQC, alignment, BAM processing |
+| Repro Enforcer | Planned | — | Export any analysis as Conda env + Singularity + Nextflow |
 
 ## Why It Matters (the equity argument)
 

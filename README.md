@@ -37,7 +37,7 @@ https://github.com/ClawBio/ClawBio/releases/download/v0.2.0/david-nutrigx-demo.m
 </details>
 
 <p align="center">
-  <img src="img/demo.gif" alt="ClawBio PharmGx Demo" width="700">
+  <img src="img/pharmgx-demo.png" alt="ClawBio PharmGx Demo" width="700">
   <br><em>PharmGx Reporter: 12 genes, 51 drugs, under 1 second</em>
 </p>
 
@@ -49,7 +49,7 @@ Manuel Corpas introduces ClawBio to Peter Steinberger at the UK AI Agent Hack (1
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=1j3kAocFfFc">
-    <img src="https://img.youtube.com/vi/1j3kAocFfFc/maxresdefault.jpg" alt="ClawBio intro to Peter Steinberger" width="700">
+    <img src="img/clawbio-peter-steinberger-poster.jpg" alt="ClawBio intro to Peter Steinberger" width="400">
   </a>
   <br><em>Click to watch on YouTube</em>
 </p>

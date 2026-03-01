@@ -47,7 +47,7 @@ https://github.com/ClawBio/ClawBio/releases/download/v0.2.0/david-nutrigx-demo.m
 
 Manuel Corpas introduces ClawBio to Peter Steinberger at the UK AI Agent Hack (1 March 2026):
 
-https://github.com/ClawBio/ClawBio/raw/main/img/clawbio-peter-steinberger-intro.mp4
+https://github.com/ClawBio/ClawBio/releases/download/v0.3.0/clawbio-peter-steinberger-intro.mp4
 
 ---
 

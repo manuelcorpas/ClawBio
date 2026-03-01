@@ -888,7 +888,19 @@ def phenotype_to_key(phenotype_desc):
         "Intermediate Expressor": "intermediate_metabolizer",
         "CYP3A5 Non-expressor": "poor_metabolizer",
     }
-    return mapping.get(phenotype_desc, "indeterminate")
+    # Try exact match first, then strip qualifiers like "(inferred)"
+    key = mapping.get(phenotype_desc)
+    if key:
+        return key
+    stripped = phenotype_desc.split("(")[0].strip() if "(" in phenotype_desc else phenotype_desc
+    key = mapping.get(stripped)
+    if key:
+        return key
+    # Try prefix match: "Normal" → "Normal Metabolizer"
+    for label, val in mapping.items():
+        if label.startswith(stripped):
+            return val
+    return "indeterminate"
 
 
 def get_warfarin_rec(profiles):

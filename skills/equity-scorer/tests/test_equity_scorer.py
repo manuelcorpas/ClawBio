@@ -167,7 +167,8 @@ def test_pca_variance_sums_to_at_most_one():
 
 def test_representation_index_range():
     pop_counts = {"AFR": 8, "AMR": 5, "EAS": 7, "EUR": 22, "SAS": 8}
-    ri = compute_representation_index(pop_counts)
+    result = compute_representation_index(pop_counts)
+    ri = result["representation_index"]
     assert 0.0 <= ri <= 1.0
 
 
@@ -175,7 +176,8 @@ def test_representation_index_perfect():
     """Perfect match to global proportions should give RI close to 1."""
     total = 1000
     pop_counts = {k: int(v * total) for k, v in GLOBAL_PROPORTIONS.items()}
-    ri = compute_representation_index(pop_counts)
+    result = compute_representation_index(pop_counts)
+    ri = result["representation_index"]
     assert ri > 0.95
 
 

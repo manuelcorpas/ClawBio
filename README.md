@@ -43,6 +43,14 @@ https://github.com/ClawBio/ClawBio/releases/download/v0.2.0/david-nutrigx-demo.m
 
 ---
 
+## ClawBio at the UK AI Agent Hack, Imperial College London
+
+Manuel Corpas introduces ClawBio to Peter Steinberger at the UK AI Agent Hack (1 March 2026):
+
+https://github.com/ClawBio/ClawBio/releases/download/v0.3.0/clawbio-peter-steinberger-intro.mp4
+
+---
+
 ## The Problem
 
 You read a paper. You want to reproduce Figure 3. So you:
